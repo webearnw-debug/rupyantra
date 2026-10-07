@@ -19,7 +19,6 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"Rupeyantra AI","url":"https://rupyantra.vercel.app/ai","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"hi-IN","description":"Free AI assistant jo loan, EMI, SIP, budget aur bachat ke sawalon ke jawab Hinglish mein deta hai.","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}},
-{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://rupyantra.vercel.app/"},{"@type":"ListItem","position":2,"name":"Rupeyantra AI","item":"https://rupyantra.vercel.app/ai"}]},
 {"@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Rupeyantra AI kya hai?","acceptedAnswer":{"@type":"Answer","text":"Rupeyantra AI ek free assistant hai jo EMI, SIP, budget, loan aur bachat jaise paise ke sawalon ka jawab Hinglish mein deta hai."}},
 {"@type":"Question","name":"Kya Rupeyantra AI free hai?","acceptedAnswer":{"@type":"Answer","text":"Haan, Rupeyantra AI use karne ke liye koi charge ya signup nahi hai."}},
@@ -37,7 +36,7 @@ html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--text);font-family:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 #app{height:100%;display:flex;flex-direction:column;background:var(--sky);padding-top:env(safe-area-inset-top,0px)}
 .top{display:flex;justify-content:flex-end;align-items:center;padding:6px 12px}
-.ib{width:40px;height:40px;border:0;background:none;color:var(--text);display:grid;place-items:center;border-radius:14px;cursor:pointer;text-decoration:none}
+.ib{width:40px;height:40px;border:0;background:none;color:var(--text);display:grid;place-items:center;border-radius:14px;cursor:pointer}
 .ib:hover{background:rgba(120,100,200,.12)}
 .ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 :focus-visible{outline:3px solid var(--g3);outline-offset:2px}
@@ -49,9 +48,9 @@ h1{font-size:clamp(22px,6vw,30px);line-height:1.2;font-weight:600;text-align:cen
 .msg{max-width:86%;padding:9px 14px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.5}
 .msg.bot{background:var(--bot);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
 .msg.user{background:linear-gradient(100deg,var(--g2),var(--g3));color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
+.msg.err{border-color:#e5484d;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
 
 .card{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:12px 12px 8px 16px;min-height:112px;display:flex;flex-direction:column;box-shadow:0 8px 30px -14px rgba(90,70,200,.25)}
-.card:focus-within{border-color:var(--line)}
 textarea:focus,textarea:focus-visible{outline:none;box-shadow:none}
 textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:400 15px/1.5 "Outfit",system-ui,sans-serif;min-height:48px;max-height:200px;padding:0}
 textarea::placeholder{color:var(--muted)}
@@ -64,20 +63,18 @@ textarea::placeholder{color:var(--muted)}
 #send:disabled{opacity:.5}
 .has-text #send{display:grid}.has-text #mic{display:none}
 
-/* chat shuru hone ke baad */
 .chatting #body{justify-content:flex-start}
 .chatting h1{display:none}
 .chatting #msgs{display:flex}
-.chatting .card{min-height:0;border-radius:22px;margin-bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:row;align-items:flex-end;padding:6px 6px 6px 16px;gap:6px}
+.chatting .card{min-height:0;margin-bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:row;align-items:flex-end;padding:6px 6px 6px 16px;gap:6px}
 .chatting textarea{min-height:24px;padding:8px 0}
 .chatting .row{padding:0}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .thinking{background:none!important;border:0!important;padding:4px 0!important;display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
 .thinking .dot{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g3));color:#fff;display:grid;place-items:center;font-size:14px;font-weight:700;animation:pulse 1.4s ease-in-out infinite}
 .thinking .t{background:linear-gradient(100deg,var(--g3),var(--g1),var(--g2),var(--g3));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 2.2s linear infinite}
 @keyframes shine{to{background-position:-300% 0}}
 @keyframes pulse{50%{transform:scale(.85);opacity:.7}}
-@media (prefers-reduced-motion:reduce){.thinking .dot,.thinking .t{animation:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.thinking .dot,.thinking .t{animation:none}}
 </style>
 </head>
 <body>
@@ -118,6 +115,12 @@ function grow(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeig
 inp.addEventListener('input',grow);
 inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
 
+function showError(bot,text){
+  bot.classList.remove('thinking');
+  bot.classList.add('err');
+  bot.textContent=text;
+}
+
 async function ask(q){
   if(!q||send.disabled)return;
   app.classList.add('chatting');
@@ -127,18 +130,26 @@ async function ask(q){
   bot.classList.add('thinking');bot.innerHTML='<span class="dot">₹</span><span class="t">Soch raha hu...</span>';
   try{
     const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
-    if(!res.ok)throw new Error(res.status);
-    const data=await res.json();
-    bot.classList.remove('thinking');bot.textContent=data.reply;history.push({role:'assistant',content:data.reply});
+    let data=null;
+    try{data=await res.json()}catch(_){}
+    if(!res.ok||!data||!data.reply){
+      let t='Error '+res.status+'\n\n';
+      if(data&&data.message)t+=data.message;
+      else if(res.status===404)t+='/api/chat nahi mila. Check karo ki file api/chat.js naam se, api folder ke andar hai.';
+      else t+='Server se sahi jawab nahi aaya.';
+      if(data&&data.keys)t+='\n\nKeys: '+Object.keys(data.keys).map(k=>k+'='+(data.keys[k]?'mili':'NAHI mili')).join(', ');
+      showError(bot,t);history.pop();
+    }else{
+      bot.classList.remove('thinking');bot.textContent=data.reply;history.push({role:'assistant',content:data.reply});
+    }
   }catch(e){
-    bot.classList.remove('thinking');bot.textContent='Kuch gadbad ho gayi, thodi der baad dobara try karo.';history.pop();
+    showError(bot,'Network error: '+e.message+'\n\nInternet check karo aur dobara try karo.');history.pop();
   }finally{send.disabled=false;msgs.scrollTop=msgs.scrollHeight}
 }
 form.addEventListener('submit',e=>{e.preventDefault();ask(inp.value.trim())});
 
 $('newChat').onclick=()=>{history=[];msgs.innerHTML='';app.classList.remove('chatting');inp.value='';grow();inp.focus()};
 
-/* bolkar poochho (Hindi/English), jahan browser support kare */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SR){mic.style.display='none'}else{
   let rec=null,on=false;
