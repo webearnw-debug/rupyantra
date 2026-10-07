@@ -51,7 +51,8 @@ h1{font-size:clamp(22px,6vw,30px);line-height:1.2;font-weight:600;text-align:cen
 .msg.user{background:linear-gradient(100deg,var(--g2),var(--g3));color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
 
 .card{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:12px 12px 8px 16px;min-height:112px;display:flex;flex-direction:column;box-shadow:0 8px 30px -14px rgba(90,70,200,.25)}
-.card:focus-within{border-color:var(--g3)}
+.card:focus-within{border-color:var(--line)}
+textarea:focus,textarea:focus-visible{outline:none;box-shadow:none}
 textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:400 15px/1.5 "Outfit",system-ui,sans-serif;min-height:48px;max-height:200px;padding:0}
 textarea::placeholder{color:var(--muted)}
 .row{display:flex;justify-content:flex-end;align-items:center;gap:4px;padding-top:6px}
