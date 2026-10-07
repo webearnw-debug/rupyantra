@@ -3,15 +3,20 @@ Hinglish (Roman Hindi) mein saaf, dosti bhare aur chhote jawab do, jab tak user 
 Jawab mobile par aasaani se padhne layak rakho. EMI, SIP, budget, bachat jaise finance sawalon mein madad karo
 aur calculation step-by-step samjhao, hisaab dobara check karke likho. Tum licensed financial advisor nahi ho,
 isliye specific invest/trade karne ki confident salah mat do, sirf jaankari do aur zaroorat par
-SEBI-registered advisor se milne ko kaho.`;
+SEBI-registered advisor se milne ko kaho.
+Agar user photo ya file bheje to use dhyaan se padho aur uske hisaab se jawab do.`;
 
-const TIMEOUT = 15000;
+const TIMEOUT = 25000;
+const MEDIA_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+const MAX_MEDIA_CHARS = 4000000;
 
 async function fail(name, r) {
   let body = '';
   try { body = (await r.text()).slice(0, 200); } catch (e) {}
   throw new Error(`${name} ${r.status} ${body}`);
 }
+
+const plain = messages => messages.map(m => ({ role: m.role, content: m.content }));
 
 async function askGroq(messages) {
   const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -24,7 +29,7 @@ async function askGroq(messages) {
       model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
       max_tokens: 1500,
       reasoning_effort: 'low',
-      messages: [{ role: 'system', content: SYSTEM }, ...messages],
+      messages: [{ role: 'system', content: SYSTEM }, ...plain(messages)],
     }),
     signal: AbortSignal.timeout(TIMEOUT),
   });
@@ -48,16 +53,24 @@ async function askGemini(messages) {
         systemInstruction: { parts: [{ text: SYSTEM }] },
         contents: messages.map(m => ({
           role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }],
+          parts: [
+            { text: m.content },
+            ...(m.attachments || []).map(a => ({
+              inlineData: { mimeType: a.mime, data: a.data },
+            })),
+          ],
         })),
-        generationConfig: { maxOutputTokens: 1500, thinkingConfig: { thinkingLevel: 'low' } },
+        generationConfig: {
+          maxOutputTokens: 1500,
+          thinkingConfig: { thinkingLevel: 'low' },
+        },
       }),
       signal: AbortSignal.timeout(TIMEOUT),
     }
   );
   if (!r.ok) await fail('Gemini', r);
   const d = await r.json();
-  const t = d.candidates?.[0]?.content?.parts?.map(p => p.text).join('');
+  const t = d.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
   if (!t) throw new Error('Gemini khali jawab');
   return t;
 }
@@ -72,7 +85,7 @@ async function askOpenRouter(messages) {
     body: JSON.stringify({
       model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct',
       max_tokens: 1000,
-      messages: [{ role: 'system', content: SYSTEM }, ...messages],
+      messages: [{ role: 'system', content: SYSTEM }, ...plain(messages)],
     }),
     signal: AbortSignal.timeout(TIMEOUT),
   });
@@ -99,19 +112,41 @@ module.exports = async (req, res) => {
   const msgs = Array.isArray(req.body?.messages) ? req.body.messages.slice(-20) : [];
   const clean = msgs
     .filter(m => (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
-    .map(m => ({ role: m.role, content: m.content.slice(0, 2000) }));
+    .map(m => {
+      const o = { role: m.role, content: m.content.slice(0, 20000) };
+      if (m.role === 'user' && Array.isArray(m.attachments)) {
+        const a = m.attachments
+          .filter(x => x && MEDIA_TYPES.includes(x.mime) && typeof x.data === 'string')
+          .slice(0, 3)
+          .map(x => ({ mime: x.mime, data: x.data }));
+        if (a.length) o.attachments = a;
+      }
+      return o;
+    });
+
   if (!clean.length || clean[clean.length - 1].role !== 'user') {
     return res.status(400).json({ message: 'Galat request' });
   }
 
-  const providers = ALL.filter(p => keys[p.name]);
+  const mediaSize = clean.reduce(
+    (n, m) => n + (m.attachments || []).reduce((s, a) => s + a.data.length, 0),
+    0
+  );
+  if (mediaSize > MAX_MEDIA_CHARS) {
+    return res.status(413).json({ message: 'Photo/file bahut badi hai. Chhoti photo ya file bhejo.' });
+  }
+  const needsGemini = mediaSize > 0;
+
+  // Photo aur PDF sirf Gemini samajhta hai. Text wale sawal kisi bhi provider se chalte hain.
+  const providers = ALL.filter(p => keys[p.name] && (!needsGemini || p.name === 'gemini'));
+
   if (!providers.length) {
-    const missing = ALL.map(p => p.env).join(', ');
     return res.status(500).json({
-      message:
-        'Koi API key nahi mili.\n\nVercel > Settings > Environment Variables mein ye daalo: ' +
-        missing +
-        '\nPhir Redeploy karo.',
+      message: needsGemini
+        ? 'Photo ya PDF ke liye GEMINI_API_KEY zaroori hai. Vercel mein add karo aur Redeploy karo.'
+        : 'Koi API key nahi mili.\n\nVercel > Settings > Environment Variables mein ye daalo: ' +
+          ALL.map(p => p.env).join(', ') +
+          '\nPhir Redeploy karo.',
       keys,
     });
   }
