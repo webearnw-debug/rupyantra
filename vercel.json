@@ -1,0 +1,4 @@
+{
+  "functions": { "api/chat.js": { "maxDuration": 30 } },
+  "rewrites": [{ "source": "/ai", "destination": "/ai.html" }]
+}
