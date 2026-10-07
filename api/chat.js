@@ -58,7 +58,20 @@ async function askOpenRouter(messages) {
   return t;
 }
 
-module.exports = async (req, res) => {
+module.exports = async (req, res) => {  if (req.method === 'GET' && req.query?.debug === '1') {
+    const test = [{ role: 'user', content: 'hi' }];
+    const out = {
+      keys: {
+        groq: !!process.env.GROQ_API_KEY,
+        gemini: !!process.env.GEMINI_API_KEY,
+        openrouter: !!process.env.OPENROUTER_API_KEY,
+      },
+    };
+    for (const [n, f] of [['groq', askGroq], ['gemini', askGemini], ['openrouter', askOpenRouter]]) {
+      try { await f(test); out[n] = 'ok'; } catch (e) { out[n] = e.message; }
+    }
+    return res.status(200).json(out);
+  }
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
   const msgs = Array.isArray(req.body?.messages) ? req.body.messages.slice(-20) : [];
