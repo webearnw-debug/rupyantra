@@ -21,8 +21,9 @@ async function askGroq(messages) {
       Authorization: `Bearer ${process.env.GROQ_API_KEY.trim()}`,
     },
     body: JSON.stringify({
-      model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
-      max_tokens: 700,
+      model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
+      max_tokens: 1500,
+      reasoning_effort: 'low',
       messages: [{ role: 'system', content: SYSTEM }, ...messages],
     }),
     signal: AbortSignal.timeout(TIMEOUT),
@@ -34,7 +35,7 @@ async function askGroq(messages) {
 }
 
 async function askGemini(messages) {
-  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
   const r = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {
@@ -49,7 +50,7 @@ async function askGemini(messages) {
           role: m.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: m.content }],
         })),
-        generationConfig: { maxOutputTokens: 700 },
+        generationConfig: { maxOutputTokens: 1500, thinkingConfig: { thinkingLevel: 'low' } },
       }),
       signal: AbortSignal.timeout(TIMEOUT),
     }
@@ -69,8 +70,8 @@ async function askOpenRouter(messages) {
       Authorization: `Bearer ${process.env.OPENROUTER_API_KEY.trim()}`,
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct:free',
-      max_tokens: 700,
+      model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct',
+      max_tokens: 1000,
       messages: [{ role: 'system', content: SYSTEM }, ...messages],
     }),
     signal: AbortSignal.timeout(TIMEOUT),
