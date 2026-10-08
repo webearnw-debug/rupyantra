@@ -95,6 +95,13 @@ input[type=file]{display:none}
 .chatting textarea{order:1;flex:1;min-width:0;min-height:24px;padding:8px 0}
 .chatting #mic{order:2}
 .chatting #send{order:3}
+.sugg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 18px}
+.sugg button{border:1px solid var(--line);background:var(--card);color:var(--text);font:500 13.5px "Outfit",system-ui,sans-serif;padding:8px 14px;border-radius:999px;cursor:pointer;text-align:left;line-height:1.3}
+.sugg button:hover{background:rgba(124,58,237,.1)}
+.chatting .sugg{display:none}
+.tools{display:flex;gap:4px;margin-top:6px}
+.tools button{border:0;background:none;color:var(--muted);font:500 12.5px "Outfit",system-ui,sans-serif;cursor:pointer;padding:3px 8px;border-radius:8px}
+.tools button:hover{background:rgba(124,58,237,.1);color:var(--text)}
 .thinking{background:none!important;border:0!important;padding:4px 0!important;display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
 .thinking .dot{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g3));color:#fff;display:grid;place-items:center;font-size:14px;font-weight:700;animation:pulse 1.4s ease-in-out infinite}
 .thinking .t{background:linear-gradient(100deg,var(--g3),var(--g1),var(--g2),var(--g3));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 2.2s linear infinite}
@@ -113,6 +120,7 @@ input[type=file]{display:none}
 
   <main id="body">
     <h1>Rupeyantra AI: Aapka Finance Saathi</h1>
+    <div class="sugg" id="sugg"></div>
     <div id="msgs" aria-live="polite"></div>
 
     <div id="dock">
@@ -152,13 +160,31 @@ input[type=file]{display:none}
 const $=id=>document.getElementById(id);
 const app=$('app'),msgs=$('msgs'),inp=$('inp'),send=$('send'),form=$('form'),mic=$('mic');
 const plus=$('plus'),menu=$('menu'),imgIn=$('imgIn'),fileIn=$('fileIn'),chips=$('chips'),note=$('note');
-let history=[],pending=[];
+let history=[],pending=[],log=[],gen=0;
 const MAX_FILES=3,MAX_B64=3800000,MAX_PDF=2500000,MAX_TEXT=12000;
+const KEY='rupeyantra_chat_v1';
+const SUGG=[
+  'EMI kaise nikalte hain?',
+  '50 lakh ka home loan 8.5% par 20 saal ke liye EMI kitni hogi?',
+  'Mahine ki 5000 ki SIP 12% par 10 saal mein kitni banegi?',
+  'Mahine ka budget kaise banaye?'
+];
 
 function refresh(){form.classList.toggle('has-text',inp.value.trim().length>0||pending.length>0)}
 function grow(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,200)+'px';refresh()}
 inp.addEventListener('input',grow);
 inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+
+/* chat save / restore (sirf is phone ke browser mein) */
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify({
+      log:log.slice(-30),
+      history:history.slice(-20).map(m=>({role:m.role,content:m.content.slice(0,4000)}))
+    }));
+  }catch(e){}
+}
+function wipe(){try{localStorage.removeItem(KEY)}catch(e){}}
 
 function add(role,text){const d=document.createElement('div');d.className='msg '+role;d.textContent=text;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
 function addUser(text,atts){
@@ -171,6 +197,44 @@ function addUser(text,atts){
   msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
 }
 function showError(bot,text){bot.classList.remove('thinking');bot.classList.add('err');bot.textContent=text}
+
+/* copy / share */
+async function copyText(t,btn){
+  let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}
+  catch(e){
+    const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{ok=document.execCommand('copy')}catch(_){}
+    ta.remove();
+  }
+  btn.textContent=ok?'Copy ho gaya ✓':'Copy nahi hua';
+  setTimeout(()=>{btn.textContent='Copy'},1800);
+}
+
+/* bot ka jawab: dheere-dheere likha hua + Copy/Share button */
+function botMsg(bot,text,animate){
+  bot.classList.remove('thinking','err');bot.innerHTML='';
+  const span=document.createElement('span');bot.appendChild(span);
+  const tools=document.createElement('div');tools.className='tools';
+  const cb=document.createElement('button');cb.type='button';cb.textContent='Copy';
+  cb.onclick=()=>copyText(text,cb);tools.appendChild(cb);
+  if(navigator.share){
+    const sb=document.createElement('button');sb.type='button';sb.textContent='Share';
+    sb.onclick=()=>{navigator.share({text:text+'\n\n- Rupeyantra AI'}).catch(()=>{})};
+    tools.appendChild(sb);
+  }
+  const finish=()=>{span.textContent=text;bot.appendChild(tools);msgs.scrollTop=msgs.scrollHeight};
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(!animate||reduce||text.length<40){finish();return}
+  const my=gen;let i=0;const step=Math.max(3,Math.ceil(text.length/90));
+  const t=setInterval(()=>{
+    if(my!==gen){clearInterval(t);return}
+    i+=step;
+    if(i>=text.length){clearInterval(t);finish();return}
+    span.textContent=text.slice(0,i);msgs.scrollTop=msgs.scrollHeight;
+  },18);
+}
 
 let noteTimer=null;
 function warn(t){note.textContent=t;note.classList.add('show');clearTimeout(noteTimer);noteTimer=setTimeout(()=>note.classList.remove('show'),5000)}
@@ -258,6 +322,7 @@ async function ask(q){
   const media=atts.filter(a=>a.kind==='media').map(a=>({mime:a.mime,data:a.data}));
   inp.value='';grow();inp.style.height='auto';
   addUser(q,atts);
+  log.push({role:'user',text:q,files:atts.map(a=>a.name)});
   const m={role:'user',content};if(media.length)m.attachments=media;
   history.push(m);
   send.disabled=true;const bot=add('bot','');
@@ -273,17 +338,40 @@ async function ask(q){
       else if(res.status===404)t+='/api/chat nahi mila. Check karo ki file api/chat.js naam se, api folder ke andar hai.';
       else t+='Server se sahi jawab nahi aaya.';
       if(data&&data.keys)t+='\n\nKeys: '+Object.keys(data.keys).map(k=>k+'='+(data.keys[k]?'mili':'NAHI mili')).join(', ');
-      showError(bot,t);history.pop();
+      showError(bot,t);history.pop();log.pop();
     }else{
-      bot.classList.remove('thinking');bot.textContent=data.reply;history.push({role:'assistant',content:data.reply});
+      botMsg(bot,data.reply,true);
+      history.push({role:'assistant',content:data.reply});
+      log.push({role:'bot',text:data.reply});
+      save();
     }
   }catch(e){
-    showError(bot,'Network error: '+e.message+'\n\nInternet check karo aur dobara try karo.');history.pop();
+    showError(bot,'Network error: '+e.message+'\n\nInternet check karo aur dobara try karo.');history.pop();log.pop();
   }finally{send.disabled=false;msgs.scrollTop=msgs.scrollHeight}
 }
 form.addEventListener('submit',e=>{e.preventDefault();ask(inp.value.trim())});
 
-$('newChat').onclick=()=>{history=[];pending=[];renderChips();msgs.innerHTML='';app.classList.remove('chatting');inp.value='';grow();inp.focus()};
+$('newChat').onclick=()=>{gen++;history=[];pending=[];log=[];wipe();renderChips();msgs.innerHTML='';app.classList.remove('chatting');inp.value='';grow();inp.focus()};
+
+/* shuru ke sawal ke buttons */
+SUGG.forEach(t=>{
+  const b=document.createElement('button');b.type='button';b.textContent=t;
+  b.onclick=()=>ask(t);$('sugg').appendChild(b);
+});
+
+/* pichli chat wapas dikhao */
+(function restore(){
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(!d||!Array.isArray(d.log)||!d.log.length)return;
+    log=d.log;history=Array.isArray(d.history)?d.history:[];
+    app.classList.add('chatting');
+    log.forEach(x=>{
+      if(x.role==='user')addUser(x.text||'',(x.files||[]).map(n=>({name:n})));
+      else botMsg(add('bot',''),x.text||'',false);
+    });
+  }catch(e){}
+})();
 
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SR){mic.style.display='none'}else{
