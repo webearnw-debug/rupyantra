@@ -65,7 +65,7 @@ async function askGemini(messages) {
           thinkingConfig: { thinkingLevel: 'low' },
         },
       }),
-      signal: AbortSignal.timeout(TIMEOUT),
+      signal: AbortSignal.timeout(50000),
     }
   );
   if (!r.ok) await fail('Gemini', r);
