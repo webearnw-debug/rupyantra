@@ -1,69 +1,190 @@
-<!-- =========================
+<!-- ================================
      R U P E Y A N T R A
-     ADVANCED PREMIUM HEADER
-     ========================= -->
+     PREMIUM SEO-FRIENDLY HEADER
+     ================================ -->
 
-<header class="ry-header">
-  <div class="ry-header-inner">
+<header class="rupe-header">
 
-    <!-- BRAND -->
-    <a href="/" class="ry-brand" aria-label="Rupeyantra - Smart Finance Tools">
-      <span class="ry-logo">₹</span>
+  <div class="rupe-header-inner">
 
-      <span class="ry-brand-info">
+    <!-- LOGO / BRAND -->
+    <a href="/" class="rupe-brand" aria-label="Rupeyantra Home">
+
+      <span class="rupe-logo">
+        ₹
+      </span>
+
+      <span class="rupe-brand-name">
         <strong>Rupeyantra</strong>
         <small>Smart Finance Tools</small>
       </span>
+
     </a>
 
 
-    <!-- MAIN NAVIGATION -->
-    <nav class="ry-nav" aria-label="Primary navigation">
+    <!-- DESKTOP NAVIGATION -->
+    <nav class="rupe-nav" aria-label="Primary navigation">
 
-      <a href="/" class="ry-nav-link active">
-        <span>Home</span>
+      <a href="/" class="rupe-link active">
+        Home
       </a>
 
-      <a href="/calculators" class="ry-nav-link calculator-link">
-        <span class="nav-icon">▣</span>
-        <span>Calculators</span>
+      <a href="/calculators" class="rupe-link rupe-main-link">
+        Calculators
       </a>
 
-      <a href="/ai" class="ry-nav-link ai-link">
-        <span class="ai-dot"></span>
-        <span>Rupeyantra AI</span>
+
+      <!-- COMPARE DROPDOWN -->
+      <div class="rupe-dropdown">
+
+        <button
+          class="rupe-dropdown-btn"
+          type="button"
+          aria-expanded="false"
+          onclick="toggleRupeDropdown(this)">
+
+          Compare
+          <span>⌄</span>
+
+        </button>
+
+        <div class="rupe-dropdown-menu">
+
+          <a href="/loan-card-compare">
+            <span class="menu-symbol">₹</span>
+            <span>
+              <b>Loan & Card Compare</b>
+              <small>Compare loans and credit cards</small>
+            </span>
+          </a>
+
+          <a href="/insurance-compare">
+            <span class="menu-symbol">◆</span>
+            <span>
+              <b>Insurance Compare</b>
+              <small>Compare insurance options</small>
+            </span>
+          </a>
+
+          <a href="/investment-demat-compare">
+            <span class="menu-symbol">↗</span>
+            <span>
+              <b>Investment / Demat Compare</b>
+              <small>Compare investment platforms</small>
+            </span>
+          </a>
+
+          <a href="/savings-fd-compare">
+            <span class="menu-symbol">▣</span>
+            <span>
+              <b>Savings / FD Compare</b>
+              <small>Compare savings and FD options</small>
+            </span>
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- MARKET DATA -->
+      <a href="/market-data" class="rupe-link market-link">
+        <span class="live-dot"></span>
+        Market Data
+      </a>
+
+
+      <!-- AI -->
+      <a href="/ai" class="rupe-link ai-link">
+        <span>✦</span>
+        AI Assistant
         <b>NEW</b>
       </a>
 
-      <a href="/finance" class="ry-nav-link">
-        <span>Finance</span>
-      </a>
 
-      <a href="/guides" class="ry-nav-link">
-        <span>Guides</span>
-      </a>
+      <!-- MORE DROPDOWN -->
+      <div class="rupe-dropdown">
+
+        <button
+          class="rupe-dropdown-btn"
+          type="button"
+          aria-expanded="false"
+          onclick="toggleRupeDropdown(this)">
+
+          More
+          <span>⌄</span>
+
+        </button>
+
+        <div class="rupe-dropdown-menu more-menu">
+
+          <a href="/credit-score">
+            <span class="menu-symbol">★</span>
+            <span>
+              <b>Credit Score Checker</b>
+              <small>Check and understand your credit score</small>
+            </span>
+          </a>
+
+          <a href="/glossary">
+            <span class="menu-symbol">?</span>
+            <span>
+              <b>Terms Glossary</b>
+              <small>Understand financial terms</small>
+            </span>
+          </a>
+
+          <a href="/guides">
+            <span class="menu-symbol">☰</span>
+            <span>
+              <b>How-to Guides</b>
+              <small>Simple finance guides and explainers</small>
+            </span>
+          </a>
+
+        </div>
+
+      </div>
 
     </nav>
 
 
     <!-- RIGHT SIDE -->
-    <div class="ry-actions">
+    <div class="rupe-actions">
 
-      <a href="/calculators" class="ry-primary-btn">
+      <!-- SEARCH -->
+      <button
+        class="rupe-search"
+        type="button"
+        aria-label="Search Rupeyantra"
+        onclick="openRupeSearch()">
+
+        <span>⌕</span>
+
+      </button>
+
+
+      <!-- PRIMARY CTA -->
+      <a href="/calculators" class="rupe-cta">
+
         <span>Start Calculating</span>
-        <span class="arrow">→</span>
+
+        <strong>→</strong>
+
       </a>
 
-      <button
-        class="ry-menu-btn"
-        type="button"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        onclick="ryToggleMenu()">
 
-        <span></span>
-        <span></span>
-        <span></span>
+      <!-- MOBILE MENU -->
+      <button
+        class="rupe-mobile-btn"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        onclick="toggleRupeMobile()">
+
+        <i></i>
+        <i></i>
+        <i></i>
 
       </button>
 
@@ -72,120 +193,145 @@
   </div>
 
 
-  <!-- MOBILE NAV -->
-  <nav class="ry-mobile-nav" aria-label="Mobile navigation">
+  <!-- MOBILE MENU -->
+
+  <div class="rupe-mobile-menu">
 
     <a href="/">
       <span>⌂</span>
       Home
     </a>
 
-    <a href="/calculators">
+    <a href="/calculators" class="mobile-important">
       <span>▣</span>
       Calculators
     </a>
 
+    <div class="mobile-heading">
+      Compare
+    </div>
+
+    <a href="/loan-card-compare">
+      <span>₹</span>
+      Loan & Card Compare
+    </a>
+
+    <a href="/insurance-compare">
+      <span>◆</span>
+      Insurance Compare
+    </a>
+
+    <a href="/investment-demat-compare">
+      <span>↗</span>
+      Investment / Demat Compare
+    </a>
+
+    <a href="/savings-fd-compare">
+      <span>▣</span>
+      Savings / FD Compare
+    </a>
+
+    <div class="mobile-heading">
+      Tools & Information
+    </div>
+
+    <a href="/market-data">
+      <span class="mobile-live"></span>
+      Live Market Data
+    </a>
+
     <a href="/ai">
       <span>✦</span>
-      Rupeyantra AI
+      AI Assistant
       <b>NEW</b>
     </a>
 
-    <a href="/finance">
-      <span>₹</span>
-      Finance
+    <a href="/credit-score">
+      <span>★</span>
+      Credit Score Checker
+    </a>
+
+    <a href="/glossary">
+      <span>?</span>
+      Terms Glossary
     </a>
 
     <a href="/guides">
       <span>☰</span>
-      Guides
+      How-to Guides
     </a>
 
-    <a href="/calculators" class="mobile-cta">
-      Start Calculating →
+    <a href="/calculators" class="mobile-start">
+      Start Calculating
+      <strong>→</strong>
     </a>
 
-  </nav>
+  </div>
 
 </header>
 
 
 <style>
 
-/* =========================
-   RESET
-   ========================= */
+/* =====================================
+   BASE
+===================================== */
 
-.ry-header,
-.ry-header * {
+.rupe-header,
+.rupe-header * {
   box-sizing: border-box;
 }
 
-
-/* =========================
-   HEADER
-   ========================= */
-
-.ry-header {
+.rupe-header {
   position: sticky;
   top: 0;
-  z-index: 9999;
+  z-index: 99999;
 
   width: 100%;
 
-  background: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.94);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
-  border-bottom: 1px solid rgba(15,23,42,.08);
+  border-bottom: 1px solid #e8edf3;
 
   box-shadow:
-    0 4px 25px rgba(15,23,42,.045);
+    0 5px 25px rgba(15,23,42,.055);
 }
 
+.rupe-header-inner {
+  width: min(1380px, 100%);
 
-.ry-header-inner {
-
-  max-width: 1280px;
-
-  min-height: 76px;
+  min-height: 78px;
 
   margin: auto;
 
-  padding:
-    0 24px;
+  padding: 0 24px;
 
   display: flex;
-
   align-items: center;
 
-  justify-content: space-between;
-
-  gap: 30px;
+  gap: 25px;
 }
 
 
-/* =========================
+/* =====================================
    BRAND
-   ========================= */
+===================================== */
 
-.ry-brand {
-
-  display: inline-flex;
-
+.rupe-brand {
+  display: flex;
   align-items: center;
 
-  gap: 11px;
+  gap: 10px;
 
   text-decoration: none;
 
   flex-shrink: 0;
 }
 
-
-.ry-logo {
-
+.rupe-logo {
   width: 43px;
   height: 43px;
 
@@ -194,448 +340,486 @@
 
   border-radius: 13px;
 
-  color: white;
+  color: #fff;
 
   font-size: 22px;
-
   font-weight: 900;
 
   background:
     linear-gradient(
       135deg,
       #111827,
-      #2563eb
+      #c99718
     );
 
   box-shadow:
-    0 8px 22px rgba(37,99,235,.24);
-
-  position: relative;
-
-  overflow: hidden;
+    0 7px 20px rgba(180,130,10,.25);
 }
 
-
-.ry-logo::after {
-
-  content: "";
-
-  position: absolute;
-
-  width: 18px;
-  height: 70px;
-
-  background: rgba(255,255,255,.18);
-
-  transform: rotate(30deg);
-
-  left: -30px;
-
-  transition: .5s;
-}
-
-
-.ry-brand:hover .ry-logo::after {
-  left: 60px;
-}
-
-
-.ry-brand-info {
-
+.rupe-brand-name {
   display: flex;
-
   flex-direction: column;
-
-  line-height: 1;
 }
 
-
-.ry-brand-info strong {
-
-  color: #0f172a;
+.rupe-brand-name strong {
+  color: #111827;
 
   font-size: 21px;
-
   font-weight: 850;
 
-  letter-spacing: -.6px;
+  letter-spacing: -.7px;
 }
 
-
-.ry-brand-info small {
-
-  margin-top: 5px;
+.rupe-brand-name small {
+  margin-top: 4px;
 
   color: #64748b;
 
-  font-size: 10px;
+  font-size: 9px;
+  font-weight: 700;
 
-  font-weight: 650;
-
-  letter-spacing: .5px;
+  letter-spacing: .65px;
 
   text-transform: uppercase;
 }
 
 
-/* =========================
-   NAVIGATION
-   ========================= */
+/* =====================================
+   NAV
+===================================== */
 
-.ry-nav {
+.rupe-nav {
+  margin-left: auto;
 
   display: flex;
-
   align-items: center;
 
-  justify-content: center;
-
-  gap: 3px;
-
-  margin-left: auto;
+  gap: 2px;
 }
 
-
-.ry-nav-link {
-
+.rupe-link,
+.rupe-dropdown-btn {
   position: relative;
 
   display: inline-flex;
-
   align-items: center;
 
-  gap: 7px;
+  gap: 6px;
 
-  padding: 11px 13px;
+  padding: 11px 12px;
 
-  border-radius: 10px;
+  border: 0;
+  border-radius: 9px;
+
+  background: transparent;
 
   color: #475569;
 
   text-decoration: none;
 
-  font-size: 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
 
-  font-weight: 650;
+  cursor: pointer;
+
+  white-space: nowrap;
 
   transition:
-    color .2s ease,
-    background .2s ease,
-    transform .2s ease;
+    .2s ease;
+}
+
+.rupe-link:hover,
+.rupe-dropdown-btn:hover,
+.rupe-link.active {
+  color: #b27b00;
+
+  background: #fff9e8;
+}
+
+.rupe-main-link {
+  color: #172554;
 }
 
 
-.ry-nav-link:hover {
+/* =====================================
+   DROPDOWNS
+===================================== */
 
-  color: #1d4ed8;
-
-  background: #eff6ff;
-
-  transform: translateY(-1px);
+.rupe-dropdown {
+  position: relative;
 }
 
+.rupe-dropdown-btn span {
+  font-size: 15px;
 
-.ry-nav-link.active {
-
-  color: #1d4ed8;
-
-  background: #eff6ff;
+  transition: transform .2s;
 }
 
+.rupe-dropdown.open
+.rupe-dropdown-btn span {
+  transform: rotate(180deg);
+}
 
-/* Active underline */
-
-.ry-nav-link.active::after {
-
-  content: "";
-
+.rupe-dropdown-menu {
   position: absolute;
 
-  left: 14px;
-  right: 14px;
+  top: calc(100% + 12px);
+  left: 50%;
 
-  bottom: 3px;
+  width: 330px;
 
-  height: 2px;
+  padding: 9px;
 
-  border-radius: 5px;
+  transform:
+    translateX(-50%)
+    translateY(-7px);
 
-  background: #2563eb;
+  opacity: 0;
+  visibility: hidden;
+
+  background: rgba(255,255,255,.98);
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 20px 50px rgba(15,23,42,.14);
+
+  transition: .2s ease;
+}
+
+.rupe-dropdown:hover
+.rupe-dropdown-menu,
+.rupe-dropdown.open
+.rupe-dropdown-menu {
+  opacity: 1;
+
+  visibility: visible;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+.rupe-dropdown-menu a {
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 11px;
+
+  border-radius: 10px;
+
+  color: #334155;
+
+  text-decoration: none;
+
+  transition: .18s;
+}
+
+.rupe-dropdown-menu a:hover {
+  background: #f8fafc;
+
+  color: #b27b00;
+}
+
+.menu-symbol {
+  width: 35px;
+  height: 35px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  color: #b27b00;
+
+  background: #fff8df;
+
+  font-weight: 800;
+}
+
+.rupe-dropdown-menu a span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.rupe-dropdown-menu b {
+  font-size: 13px;
+}
+
+.rupe-dropdown-menu small {
+  margin-top: 3px;
+
+  color: #64748b;
+
+  font-size: 10px;
 }
 
 
-/* Calculator */
+/* =====================================
+   LIVE MARKET
+===================================== */
 
-.calculator-link {
-
-  color: #1e40af;
+.market-link {
+  color: #334155;
 }
 
-
-.nav-icon {
-
-  font-size: 15px;
-}
-
-
-/* AI */
-
-.ai-link {
-
-  color: #4f46e5;
-}
-
-
-.ai-dot {
-
+.live-dot,
+.mobile-live {
   width: 7px;
   height: 7px;
 
+  display: inline-block;
+
   border-radius: 50%;
 
-  background: #7c3aed;
+  background: #16a34a;
 
   box-shadow:
-    0 0 0 4px rgba(124,58,237,.10);
+    0 0 0 4px rgba(22,163,74,.10);
 }
 
 
-.ai-link b,
-.ry-mobile-nav b {
+/* =====================================
+   AI
+===================================== */
 
-  padding: 3px 6px;
+.ai-link {
+  color: #5b21b6;
+}
 
-  border-radius: 5px;
+.ai-link > span:first-child {
+  color: #7c3aed;
+  font-size: 15px;
+}
+
+.ai-link b {
+  padding: 3px 5px;
+
+  border-radius: 4px;
 
   color: #6d28d9;
 
   background: #f3e8ff;
 
-  font-size: 8px;
-
-  font-weight: 800;
-
-  letter-spacing: .4px;
+  font-size: 7px;
 }
 
 
-/* =========================
-   RIGHT ACTION
-   ========================= */
+/* =====================================
+   ACTIONS
+===================================== */
 
-.ry-actions {
-
+.rupe-actions {
   display: flex;
-
   align-items: center;
 
-  gap: 10px;
+  gap: 9px;
+}
+
+.rupe-search {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 10px;
+
+  background: #fff;
+
+  color: #334155;
+
+  font-size: 24px;
+
+  cursor: pointer;
+}
+
+.rupe-search:hover {
+  color: #b27b00;
+  border-color: #e8c75a;
 }
 
 
-.ry-primary-btn {
+/* =====================================
+   CTA
+===================================== */
 
+.rupe-cta {
   display: inline-flex;
-
   align-items: center;
 
-  gap: 10px;
+  gap: 9px;
 
-  padding: 12px 17px;
+  padding: 12px 16px;
 
   border-radius: 11px;
+
+  color: #fff;
 
   background:
     linear-gradient(
       135deg,
-      #2563eb,
-      #1d4ed8
+      #172033,
+      #0f172a
     );
-
-  color: white;
 
   text-decoration: none;
 
-  font-size: 13px;
-
-  font-weight: 750;
+  font-size: 12px;
+  font-weight: 800;
 
   box-shadow:
-    0 8px 22px rgba(37,99,235,.22);
+    0 8px 20px rgba(15,23,42,.16);
 
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease;
+  transition: .2s;
 }
 
-
-.ry-primary-btn:hover {
-
+.rupe-cta:hover {
   transform: translateY(-2px);
 
   box-shadow:
-    0 12px 28px rgba(37,99,235,.30);
+    0 12px 26px rgba(15,23,42,.24);
 }
 
-
-.arrow {
+.rupe-cta strong {
+  color: #f4c542;
 
   font-size: 17px;
-
-  transition: transform .2s;
 }
 
 
-.ry-primary-btn:hover .arrow {
-
-  transform: translateX(3px);
-}
-
-
-/* =========================
+/* =====================================
    MOBILE BUTTON
-   ========================= */
+===================================== */
 
-.ry-menu-btn {
-
+.rupe-mobile-btn {
   display: none;
 
-  width: 43px;
-  height: 43px;
+  width: 42px;
+  height: 42px;
+
+  padding: 8px;
 
   border: 1px solid #e2e8f0;
 
-  border-radius: 11px;
+  border-radius: 10px;
 
-  background: white;
+  background: #fff;
 
   cursor: pointer;
-
-  padding: 9px;
 }
 
-
-.ry-menu-btn span {
-
+.rupe-mobile-btn i {
   display: block;
 
-  width: 21px;
-
+  width: 20px;
   height: 2px;
 
   margin: 4px auto;
 
-  border-radius: 5px;
+  background: #111827;
 
-  background: #0f172a;
-
-  transition: .25s;
+  border-radius: 3px;
 }
 
 
-/* =========================
-   MOBILE NAV
-   ========================= */
+/* =====================================
+   MOBILE MENU
+===================================== */
 
-.ry-mobile-nav {
-
+.rupe-mobile-menu {
   display: none;
 }
 
 
-/* =========================
+/* =====================================
    TABLET
-   ========================= */
+===================================== */
 
-@media (max-width: 1050px) {
+@media (max-width: 1150px) {
 
-  .ry-nav {
-
-    gap: 0;
+  .rupe-header-inner {
+    gap: 13px;
   }
 
-  .ry-nav-link {
+  .rupe-link,
+  .rupe-dropdown-btn {
+    padding-left: 8px;
+    padding-right: 8px;
 
-    padding-left: 9px;
-    padding-right: 9px;
-
-    font-size: 13px;
+    font-size: 12px;
   }
 
-  .ry-primary-btn {
+  .rupe-cta span {
+    display: none;
+  }
 
-    padding-left: 13px;
-    padding-right: 13px;
+  .rupe-cta {
+    padding: 10px 13px;
   }
 }
 
 
-/* =========================
+/* =====================================
    MOBILE
-   ========================= */
+===================================== */
 
-@media (max-width: 800px) {
+@media (max-width: 850px) {
 
-  .ry-header-inner {
+  .rupe-header-inner {
+    min-height: 67px;
 
-    min-height: 66px;
-
-    padding: 0 15px;
+    padding: 0 14px;
   }
 
-
-  .ry-nav,
-  .ry-primary-btn {
-
+  .rupe-nav,
+  .rupe-search,
+  .rupe-cta {
     display: none;
   }
 
-
-  .ry-menu-btn {
-
+  .rupe-mobile-btn {
     display: block;
   }
 
-
-  .ry-brand-info strong {
-
+  .rupe-brand-name strong {
     font-size: 19px;
   }
 
-
-  .ry-brand-info small {
-
+  .rupe-brand-name small {
     font-size: 8px;
   }
 
-
-  .ry-logo {
-
+  .rupe-logo {
     width: 39px;
     height: 39px;
-
-    border-radius: 11px;
   }
 
-
-  /* MOBILE DROPDOWN */
-
-  .ry-mobile-nav {
+  .rupe-mobile-menu {
 
     position: absolute;
 
-    top: 66px;
+    top: 67px;
 
-    left: 10px;
-    right: 10px;
+    left: 9px;
+    right: 9px;
 
-    padding: 10px;
+    max-height: calc(100vh - 80px);
 
-    display: none;
+    overflow-y: auto;
+
+    padding: 9px;
 
     flex-direction: column;
-
-    gap: 4px;
 
     background: rgba(255,255,255,.98);
 
@@ -644,25 +828,20 @@
     border-radius: 16px;
 
     box-shadow:
-      0 20px 50px rgba(15,23,42,.14);
+      0 22px 55px rgba(15,23,42,.16);
   }
 
-
-  .ry-mobile-nav.open {
-
+  .rupe-mobile-menu.open {
     display: flex;
   }
 
-
-  .ry-mobile-nav a {
-
+  .rupe-mobile-menu a {
     display: flex;
-
     align-items: center;
 
     gap: 11px;
 
-    padding: 13px;
+    padding: 12px;
 
     border-radius: 10px;
 
@@ -670,48 +849,83 @@
 
     text-decoration: none;
 
-    font-size: 14px;
-
-    font-weight: 650;
+    font-size: 13px;
+    font-weight: 700;
   }
 
-
-  .ry-mobile-nav a:hover {
-
-    background: #eff6ff;
-
-    color: #2563eb;
+  .rupe-mobile-menu a:hover {
+    background: #fff9e8;
+    color: #a16207;
   }
 
+  .mobile-important {
+    color: #172554 !important;
 
-  .ry-mobile-nav .mobile-cta {
+    background: #f8fafc;
+  }
 
+  .mobile-heading {
+    margin: 10px 8px 3px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: .7px;
+  }
+
+  .rupe-mobile-menu b {
+    margin-left: auto;
+
+    padding: 3px 6px;
+
+    border-radius: 5px;
+
+    color: #6d28d9;
+
+    background: #f3e8ff;
+
+    font-size: 8px;
+  }
+
+  .mobile-start {
     justify-content: center;
 
-    margin-top: 5px;
+    margin-top: 7px;
 
-    color: white;
+    color: #fff !important;
 
-    background: #2563eb;
+    background:
+      linear-gradient(
+        135deg,
+        #172033,
+        #0f172a
+      );
+  }
 
-    font-weight: 750;
+  .mobile-start strong {
+    margin-left: auto;
+
+    color: #f4c542;
   }
 }
 
 
-/* =========================
+/* =====================================
    SMALL MOBILE
-   ========================= */
+===================================== */
 
-@media (max-width: 390px) {
+@media (max-width: 380px) {
 
-  .ry-brand-info small {
-
+  .rupe-brand-name small {
     display: none;
   }
 
-  .ry-brand-info strong {
-
+  .rupe-brand-name strong {
     font-size: 18px;
   }
 }
@@ -721,20 +935,123 @@
 
 <script>
 
-function ryToggleMenu() {
+/* =====================================
+   DROPDOWN
+===================================== */
+
+function toggleRupeDropdown(button) {
+
+  const parent = button.parentElement;
+
+  const isOpen =
+    parent.classList.contains("open");
+
+  document
+    .querySelectorAll(".rupe-dropdown")
+    .forEach(item => {
+
+      item.classList.remove("open");
+
+      const btn =
+        item.querySelector(".rupe-dropdown-btn");
+
+      if (btn) {
+        btn.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+      }
+
+    });
+
+  if (!isOpen) {
+
+    parent.classList.add("open");
+
+    button.setAttribute(
+      "aria-expanded",
+      "true"
+    );
+
+  }
+}
+
+
+/* =====================================
+   MOBILE MENU
+===================================== */
+
+function toggleRupeMobile() {
 
   const menu =
-    document.querySelector(".ry-mobile-nav");
+    document.querySelector(".rupe-mobile-menu");
 
   const button =
-    document.querySelector(".ry-menu-btn");
+    document.querySelector(".rupe-mobile-btn");
 
-  menu.classList.toggle("open");
+  const opened =
+    menu.classList.toggle("open");
 
   button.setAttribute(
     "aria-expanded",
-    menu.classList.contains("open")
+    opened ? "true" : "false"
   );
+}
+
+
+/* =====================================
+   CLOSE DROPDOWN OUTSIDE
+===================================== */
+
+document.addEventListener(
+  "click",
+  function(event) {
+
+    if (!event.target.closest(".rupe-dropdown")) {
+
+      document
+        .querySelectorAll(".rupe-dropdown")
+        .forEach(item => {
+
+          item.classList.remove("open");
+
+          const btn =
+            item.querySelector(
+              ".rupe-dropdown-btn"
+            );
+
+          if (btn) {
+            btn.setAttribute(
+              "aria-expanded",
+              "false"
+            );
+          }
+
+        });
+
+    }
+
+  }
+);
+
+
+/* =====================================
+   SEARCH
+===================================== */
+
+function openRupeSearch() {
+
+  const query =
+    prompt("Rupeyantra par kya search karna hai?");
+
+  if (query && query.trim()) {
+
+    window.location.href =
+      "/search?q=" +
+      encodeURIComponent(query.trim());
+
+  }
+
 }
 
 </script>
