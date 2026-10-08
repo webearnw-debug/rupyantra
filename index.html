@@ -6,49 +6,126 @@
 .rh-mark{width:36px;height:36px;border-radius:50%;border:2px solid #FFB300;display:grid;place-items:center;color:#FFB300;font-weight:800}
 .rh-logo b{font-size:20px;line-height:1}
 .rh-logo small{display:block;font-size:11px;color:#9AA3D6;margin-top:2px}
-.rh nav{display:none;gap:6px}
-.rh nav a,.rh-m a{color:#DDE2FF;text-decoration:none;font-size:15px;padding:8px 12px;border-radius:10px;position:relative}
-.rh nav a:hover{background:rgba(255,255,255,.08)}
-.rh nav a[aria-current="page"]{color:#FFB300;font-weight:600}
-.rh-new{font-size:10px;font-weight:700;background:#7C3AED;color:#fff;padding:2px 6px;border-radius:6px;margin-left:6px;vertical-align:middle}
-.rh-cta{display:none;background:#FFB300;color:#241800!important;font-weight:700;padding:10px 18px!important;border-radius:12px!important}
-.rh-btn{width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:none;color:#fff;font-size:22px;cursor:pointer}
+.rh-main{display:none;gap:6px;align-items:center}
+.rh a,.rh button.rh-link{color:#DDE2FF;text-decoration:none;font:inherit;font-size:15px;padding:8px 12px;border-radius:10px;background:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.rh-main a:hover,.rh button.rh-link:hover{background:rgba(255,255,255,.08)}
+.rh-main a[aria-current="page"]{color:#FFB300;font-weight:600}
+.rh-new{font-size:10px;font-weight:700;background:#7C3AED;color:#fff;padding:2px 6px;border-radius:6px;margin-left:6px}
+.rh .rh-cta{display:none;background:#FFB300;color:#241800;font-weight:700;padding:10px 18px;border-radius:12px}
+.rh-btn{width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:none;color:#fff;font-size:22px;cursor:pointer;padding:0}
+
+/* arrow */
+.rh-arrow{width:14px;height:14px;fill:none;stroke:#FFB300;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;animation:rhBob 1.6s ease-in-out infinite;transition:transform .25s}
+@keyframes rhBob{0%,100%{transform:translateY(-1px)}50%{transform:translateY(3px)}}
+[aria-expanded="true"]>.rh-arrow{animation:none;transform:rotate(180deg)}
+
+/* desktop dropdown panel */
+.rh-panel{display:none}
+.rh-grid{max-width:1180px;margin:0 auto;padding:20px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.rh .rh-card{display:flex;gap:14px;align-items:flex-start;color:#14173D;background:#F5F6FC;border-radius:16px;padding:16px;transition:transform .2s,box-shadow .2s;text-decoration:none}
+.rh .rh-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px -12px rgba(20,23,61,.35);background:#fff}
+.rh-ic{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px}
+.rh-card b{display:block;font-size:15px;line-height:1.25}
+.rh-card span.d{display:block;font-size:13px;color:#5A5F86;margin:3px 0 8px;line-height:1.35}
+.rh-card em{font-style:normal;font-size:13px;font-weight:600;color:#3B5BDB;display:inline-block;transition:transform .2s}
+.rh-card:hover em{transform:translateX(5px)}
+
+/* mobile menu */
 .rh-m{display:none;flex-direction:column;padding:8px 16px 16px;border-top:1px solid rgba(255,255,255,.08)}
 .rh-m.open{display:flex}
-.rh-m a{font-size:17px;padding:14px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
-.rh-m a.ai{margin-top:10px;background:#FFB300;color:#241800;font-weight:700;border-radius:12px;border:0;text-align:center}
-@media (min-width:900px){.rh nav{display:flex}.rh-cta{display:inline-block}.rh-btn,.rh-m{display:none!important}}
+.rh-m a,.rh-m button.rh-link{font-size:17px;padding:14px 8px;border-radius:0;border-bottom:1px solid rgba(255,255,255,.08);width:100%;justify-content:space-between}
+.rh-msub{display:none;flex-direction:column;background:rgba(255,255,255,.05);border-radius:12px;margin:6px 0}
+.rh-msub.open{display:flex}
+.rh-m .rh-msub a{font-size:15px;padding:12px 14px;color:#C9CFF5}
+.rh-m a.ai{margin-top:10px;background:#FFB300;color:#241800;font-weight:700;border-radius:12px;border:0;justify-content:center}
+
+@media (min-width:900px){
+  .rh-main{display:flex}.rh .rh-cta{display:inline-flex}.rh-btn,.rh-m{display:none!important}
+  .rh-panel{display:block;position:absolute;left:0;right:0;top:100%;background:#fff;box-shadow:0 30px 40px -24px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .2s,transform .2s,visibility .2s}
+  .rh-panel.open{opacity:1;visibility:visible;transform:none}
+}
+@media (prefers-reduced-motion:reduce){.rh-arrow{animation:none}.rh *{transition:none!important}}
 </style>
 
-<header class="rh">
+<header class="rh" id="rh">
   <div class="rh-in">
     <a class="rh-logo" href="/" aria-label="Rupeyantra home">
       <span class="rh-mark" aria-hidden="true">₹</span>
       <span><b>Rupeyantra</b><small>Smart Finance Tools</small></span>
     </a>
-    <nav aria-label="Main menu">
+
+    <nav class="rh-main" aria-label="Main menu">
       <a href="/">Home</a>
       <a href="/calculators">Calculators</a>
-      <a href="/compare">Compare</a>
+      <button class="rh-link" id="ddBtn" aria-expanded="false" aria-controls="ddPanel">
+        Compare
+        <svg class="rh-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>
+      </button>
       <a href="/market-data">Market Data</a>
       <a href="/ai">AI Assistant<span class="rh-new">NEW</span></a>
     </nav>
-    <a class="rh-cta" href="/calculators" style="text-decoration:none;font-size:15px">Start Calculating</a>
+
+    <a class="rh-cta" href="/calculators">Start Calculating</a>
     <button class="rh-btn" id="rhBtn" aria-label="Menu kholo" aria-expanded="false">☰</button>
   </div>
+
+  <div class="rh-panel" id="ddPanel">
+    <div class="rh-grid">
+      <a class="rh-card" href="/compare/loan-card">
+        <span class="rh-ic" style="background:#DCE6FF">💳</span>
+        <span><b>Loan &amp; Card Compare</b><span class="d">Loan aur credit card compare karo</span><em>Explore →</em></span>
+      </a>
+      <a class="rh-card" href="/compare/insurance">
+        <span class="rh-ic" style="background:#E3DAFF">🛡️</span>
+        <span><b>Insurance Compare</b><span class="d">Insurance plans compare karo</span><em>Explore →</em></span>
+      </a>
+      <a class="rh-card" href="/compare/investment">
+        <span class="rh-ic" style="background:#D6F5E6">📈</span>
+        <span><b>Investment / Demat</b><span class="d">Investment platforms compare karo</span><em>Explore →</em></span>
+      </a>
+      <a class="rh-card" href="/compare/savings-fd">
+        <span class="rh-ic" style="background:#FFE0EC">🐷</span>
+        <span><b>Savings / FD Compare</b><span class="d">Savings aur FD options compare karo</span><em>Explore →</em></span>
+      </a>
+    </div>
+  </div>
+
   <nav class="rh-m" id="rhM" aria-label="Mobile menu">
     <a href="/">Home</a>
     <a href="/calculators">Calculators</a>
-    <a href="/compare">Compare</a>
+    <button class="rh-link" id="mdBtn" aria-expanded="false" aria-controls="mdSub">
+      Compare
+      <svg class="rh-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>
+    </button>
+    <div class="rh-msub" id="mdSub">
+      <a href="/compare/loan-card">Loan &amp; Card Compare</a>
+      <a href="/compare/insurance">Insurance Compare</a>
+      <a href="/compare/investment">Investment / Demat</a>
+      <a href="/compare/savings-fd">Savings / FD Compare</a>
+    </div>
     <a href="/market-data">Market Data</a>
     <a class="ai" href="/ai">✨ AI Assistant</a>
   </nav>
 </header>
+
 <script>
 (function(){
-  var b=document.getElementById('rhBtn'),m=document.getElementById('rhM');
-  b.onclick=function(){var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o);b.textContent=o?'✕':'☰'};
-  document.querySelectorAll('.rh nav a').forEach(function(a){
+  var rh=document.getElementById('rh'),
+      dd=document.getElementById('ddBtn'),panel=document.getElementById('ddPanel'),
+      burger=document.getElementById('rhBtn'),m=document.getElementById('rhM'),
+      md=document.getElementById('mdBtn'),sub=document.getElementById('mdSub'),t;
+  function setDD(o){panel.classList.toggle('open',o);dd.setAttribute('aria-expanded',o)}
+  dd.onclick=function(e){e.stopPropagation();setDD(!panel.classList.contains('open'))};
+  /* computer par hover se bhi khule */
+  function enter(){if(window.innerWidth>=900){clearTimeout(t);setDD(true)}}
+  function leave(){if(window.innerWidth>=900){t=setTimeout(function(){setDD(false)},180)}}
+  [dd,panel].forEach(function(el){el.addEventListener('mouseenter',enter);el.addEventListener('mouseleave',leave)});
+  document.addEventListener('click',function(e){if(!rh.contains(e.target))setDD(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setDD(false)});
+  /* phone menu */
+  burger.onclick=function(){var o=m.classList.toggle('open');burger.setAttribute('aria-expanded',o);burger.textContent=o?'✕':'☰'};
+  md.onclick=function(){var o=sub.classList.toggle('open');md.setAttribute('aria-expanded',o)};
+  document.querySelectorAll('.rh-main a').forEach(function(a){
     if(a.getAttribute('href')===location.pathname)a.setAttribute('aria-current','page');
   });
 })();
