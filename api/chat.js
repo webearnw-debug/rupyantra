@@ -39,8 +39,9 @@ async function askGroq(messages) {
   return t;
 }
 
-async function askGemini(messages) {
-  const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+async function geminiCall(model, messages, think) {
+  const cfg = { maxOutputTokens: 2048 };
+  if (think) cfg.thinkingConfig = { thinkingLevel: 'low' };
   const r = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {
@@ -60,19 +61,35 @@ async function askGemini(messages) {
             })),
           ],
         })),
-        generationConfig: {
-          maxOutputTokens: 1500,
-          thinkingConfig: { thinkingLevel: 'low' },
-        },
+        generationConfig: cfg,
       }),
-      signal: AbortSignal.timeout(50000),
+      signal: AbortSignal.timeout(17000),
     }
   );
-  if (!r.ok) await fail('Gemini', r);
+  if (!r.ok) await fail('Gemini(' + model + ')', r);
   const d = await r.json();
   const t = d.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('');
-  if (!t) throw new Error('Gemini khali jawab');
+  if (!t) throw new Error('Gemini(' + model + ') khali jawab');
   return t;
+}
+
+async function askGemini(messages) {
+  // Pehle tez models, phir baaki. Ek fail ho to agla try hota hai.
+  const attempts = [
+    { model: process.env.GEMINI_MODEL || 'gemini-3.5-flash', think: true },
+    { model: 'gemini-3.5-flash-lite', think: false },
+    { model: 'gemini-3.8-flash', think: false },
+  ];
+  const errs = [];
+  for (const a of attempts) {
+    try {
+      return await geminiCall(a.model, messages, a.think);
+    } catch (e) {
+      console.error('gemini attempt fail:', e.message);
+      errs.push(e.message);
+    }
+  }
+  throw new Error(errs.join(' | '));
 }
 
 async function askOpenRouter(messages) {
