@@ -1,51 +1,6 @@
-<!DOCTYPE html>
-<html lang="hi-IN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rupeyantra</title>
-<meta name="description" content="Rupeyantra: paise, EMI, SIP aur bachat ke sawalon ke liye free AI assistant.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Outfit:wght@500;600&display=swap" rel="stylesheet">
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; background: #F0F1EA; }
-  header { background: #FFFFFF; border-bottom: 1px solid #E1E5EB; }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .brand .name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.3rem; color: #16261F; letter-spacing: -0.01em; }
-  .brand .name span { color: #1F5C43; }
-
-  .ai-btn { display: inline-flex; align-items: center; gap: 8px; background: #1F5C43; color: #FFFFFF; text-decoration: none; font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-weight: 600; font-size: 0.95rem; padding: 10px 16px; border-radius: 999px; white-space: nowrap; transition: background .15s ease, transform .15s ease; }
-  .ai-btn:hover { background: #174a36; }
-  .ai-btn:active { transform: scale(.97); }
-  .ai-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-  .brand:focus-visible, .ai-btn:focus-visible { outline: 3px solid #97551C; outline-offset: 3px; border-radius: 12px; }
-  .ai-btn:focus-visible { border-radius: 999px; }
-  @media (max-width: 380px) { .brand .name { font-size: 1.15rem; } .ai-btn { padding: 9px 13px; font-size: 0.9rem; } }
-  @media (prefers-reduced-motion: reduce) { .ai-btn { transition: none; } }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="wrap">
-    <a href="/" class="brand" aria-label="Rupyantra home">
-      <svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true">
-        <circle cx="24" cy="24" r="21" fill="none" stroke="#97551C" stroke-width="1.5"/>
-        <path d="M15 19h13M15 24.5h9.5" stroke="#16261F" stroke-width="2.6" stroke-linecap="round"/>
-        <path d="M15 33L33 15m0 0h-7.5m7.5 0v7.5" stroke="#1F5C43" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="name">Rupy<span>antra</span></span>
-    </a>
-
-    <a href="/ai" class="ai-btn">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
-      AI se poochho
-    </a>
-  </div>
-</header>
-
-</body>
-</html>
+{
+  "functions": { "api/chat.js": { "maxDuration": 60 } },
+  "rewrites": [
+    { "source": "/ai", "destination": "/ai.html" }
+  ]
+}
