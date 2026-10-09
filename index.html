@@ -1,132 +1,585 @@
+<!DOCTYPE html>
+<html lang="hi-IN">
+<head>
+<meta charset="utf-8">
+<title>Rupeyantra – Free AI Finance Assistant (EMI, SIP, Budget)</title>
+<meta name="description" content="Rupeyantra par EMI, SIP, loan aur budget ke sawal poochho. Free AI assistant, Hinglish mein turant jawab. Signup ki zaroorat nahi.">
+<meta name="keywords" content="Rupeyantra AI, finance AI, EMI kaise nikale, SIP kya hai, budget kaise banaye, loan, bachat">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="canonical" href="https://rupyantra.vercel.app/">
+<link rel="icon" type="image/png" href="/logo-icon.png">
+<link rel="apple-touch-icon" href="/logo-icon.png">
+<meta property="og:title" content="Rupeyantra – Free AI Finance Assistant">
+<meta property="og:site_name" content="Rupeyantra">
+<meta property="og:url" content="https://rupyantra.vercel.app/">
+<meta property="og:locale" content="hi_IN">
+<meta property="og:description" content="Loan, EMI, SIP aur budget ke sawal poochho, jawab Hinglish mein.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","name":"Rupeyantra","url":"https://rupyantra.vercel.app/","logo":"https://rupyantra.vercel.app/logo-icon.png","description":"Rupeyantra ek free AI finance assistant hai jo EMI, SIP, loan aur budget ke sawalon ke jawab Hinglish mein deta hai."},
+{"@type":"WebSite","name":"Rupeyantra","url":"https://rupyantra.vercel.app/","inLanguage":"hi-IN"},
+{"@type":"WebApplication","name":"Rupeyantra AI","url":"https://rupyantra.vercel.app/ai","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"hi-IN","description":"Free AI assistant jo loan, EMI, SIP, budget aur bachat ke sawalon ke jawab Hinglish mein deta hai.","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Rupeyantra AI kya hai?","acceptedAnswer":{"@type":"Answer","text":"Rupeyantra AI ek free assistant hai jo EMI, SIP, budget, loan aur bachat jaise paise ke sawalon ka jawab Hinglish mein deta hai."}},
+{"@type":"Question","name":"Kya Rupeyantra AI free hai?","acceptedAnswer":{"@type":"Answer","text":"Haan, Rupeyantra AI use karne ke liye koi charge ya signup nahi hai."}},
+{"@type":"Question","name":"Kya ye financial advisor hai?","acceptedAnswer":{"@type":"Answer","text":"Nahi. AI sirf jaankari deta hai. Bade nivesh ke faisle se pehle SEBI-registered advisor se salah lein."}}
+]}]}
+</script>
 <style>
-.rh{position:sticky;top:0;z-index:50;background:#0B1230;color:#fff;font-family:"Outfit",system-ui,sans-serif;border-bottom:1px solid rgba(255,255,255,.08)}
-.rh *{box-sizing:border-box}
-.rh-in{max-width:1180px;margin:0 auto;padding:0 16px;height:64px;display:flex;align-items:center;gap:20px}
-.rh-logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;margin-right:auto}
-.rh-mark{width:36px;height:36px;border-radius:50%;border:2px solid #FFB300;display:grid;place-items:center;color:#FFB300;font-weight:800}
-.rh-logo b{font-size:20px;line-height:1}
-.rh-logo small{display:block;font-size:11px;color:#9AA3D6;margin-top:2px}
-.rh-main{display:none;gap:6px;align-items:center}
-.rh a,.rh button.rh-link{color:#DDE2FF;text-decoration:none;font:inherit;font-size:15px;padding:8px 12px;border-radius:10px;background:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.rh-main a:hover,.rh button.rh-link:hover{background:rgba(255,255,255,.08)}
-.rh-main a[aria-current="page"]{color:#FFB300;font-weight:600}
-.rh-new{font-size:10px;font-weight:700;background:#7C3AED;color:#fff;padding:2px 6px;border-radius:6px;margin-left:6px}
-.rh .rh-cta{display:none;background:#FFB300;color:#241800;font-weight:700;padding:10px 18px;border-radius:12px}
-.rh-btn{width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:none;color:#fff;font-size:22px;cursor:pointer;padding:0}
+:root{--text:#1b1b2f;--muted:#6f6c85;--line:#e3ddf3;--card:#fff;--bot:#fff;
+--g1:#0E9AA7;--g2:#3B5BDB;--g3:#7C3AED;
+--sky:linear-gradient(180deg,#B7EAEA 0%,#D9CCFF 16%,#F5F0FF 34%,#fff 58%);
+--bg:#fff}
+@media (prefers-color-scheme:dark){:root{--text:#EEEAFB;--muted:#A19DBB;--line:#34304F;--card:#1B1930;--bot:#1B1930;--sky:linear-gradient(180deg,#14434C 0%,#2A2158 20%,#17142B 45%,#100F1E 70%);--bg:#100F1E}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:#F5F8FC;min-height:100%;font-family:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 
-/* arrow */
-.rh-arrow{width:14px;height:14px;fill:none;stroke:#FFB300;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;animation:rhBob 1.6s ease-in-out infinite;transition:transform .25s}
-@keyframes rhBob{0%,100%{transform:translateY(-1px)}50%{transform:translateY(3px)}}
-[aria-expanded="true"]>.rh-arrow{animation:none;transform:rotate(180deg)}
+/* ===== HEADER (Minimal White, design 3) ===== */
+header{position:sticky;top:0;z-index:20;background:#F5F8FC;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px}
+.bar{max-width:1100px;margin:0 auto;background:#FFFFFF;border:1px solid #E6EDF5;border-radius:20px;box-shadow:0 8px 26px -14px rgba(11,42,74,.35);min-height:64px;padding:8px 10px 8px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;flex:none}
+.brand img{width:44px;height:44px;flex:none;display:block}
+.brand .txt{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.brand .name{font-family:'Outfit',system-ui,sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-.01em;color:#0B2A4A}
+.brand .tag{font-family:'Outfit',system-ui,sans-serif;font-size:.72rem;font-weight:500;color:#5B6B7F;margin-top:2px;white-space:nowrap}
 
-/* desktop dropdown panel */
-.rh-panel{display:none}
-.rh-grid{max-width:1180px;margin:0 auto;padding:20px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.rh .rh-card{display:flex;gap:14px;align-items:flex-start;color:#14173D;background:#F5F6FC;border-radius:16px;padding:16px;transition:transform .2s,box-shadow .2s;text-decoration:none}
-.rh .rh-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px -12px rgba(20,23,61,.35);background:#fff}
-.rh-ic{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px}
-.rh-card b{display:block;font-size:15px;line-height:1.25}
-.rh-card span.d{display:block;font-size:13px;color:#5A5F86;margin:3px 0 8px;line-height:1.35}
-.rh-card em{font-style:normal;font-size:13px;font-weight:600;color:#3B5BDB;display:inline-block;transition:transform .2s}
-.rh-card:hover em{transform:translateX(5px)}
+.nav-links{display:none;align-items:center;gap:2px;margin:0 auto;font-family:'Outfit',system-ui,sans-serif}
+.nav-links>a,.dd>button{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font:500 .95rem 'Outfit',system-ui,sans-serif;color:#16324F;padding:9px 11px;border-radius:12px;border:0;background:none;cursor:pointer;white-space:nowrap}
+.nav-links>a:hover,.dd>button:hover,.dd.open>button{background:#EEF3F9}
+.nav-links .ic{width:18px;height:18px;fill:none;stroke:#1F6FB5;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.nav-links .ic.v{stroke:#7C3AED}
+.chev{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.dd.open .chev{transform:rotate(180deg)}
+.dd{position:relative}
+.dd-menu{display:none;position:absolute;top:calc(100% + 8px);left:0;min-width:230px;background:#fff;border:1px solid #E6EDF5;border-radius:14px;padding:6px;box-shadow:0 14px 34px -14px rgba(11,42,74,.4);z-index:30}
+.dd.open .dd-menu{display:block}
+.dd-menu a{display:block;padding:10px 12px;border-radius:10px;text-decoration:none;color:#16324F;font:500 .93rem 'Outfit',system-ui,sans-serif}
+.dd-menu a:hover{background:#EEF3F9}
+.new{font-size:.6rem;font-weight:700;letter-spacing:.06em;background:#7C3AED;color:#fff;padding:2px 6px;border-radius:6px}
 
-/* mobile menu */
-.rh-m{display:none;flex-direction:column;padding:8px 16px 16px;border-top:1px solid rgba(255,255,255,.08)}
-.rh-m.open{display:flex}
-.rh-m a,.rh-m button.rh-link{font-size:17px;padding:14px 8px;border-radius:0;border-bottom:1px solid rgba(255,255,255,.08);width:100%;justify-content:space-between}
-.rh-msub{display:none;flex-direction:column;background:rgba(255,255,255,.05);border-radius:12px;margin:6px 0}
-.rh-msub.open{display:flex}
-.rh-m .rh-msub a{font-size:15px;padding:12px 14px;color:#C9CFF5}
-.rh-m a.ai{margin-top:10px;background:#FFB300;color:#241800;font-weight:700;border-radius:12px;border:0;justify-content:center}
+.actions{display:flex;align-items:center;gap:8px;flex:none}
+.icon-btn{display:none;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:#0B2A4A;text-decoration:none;border:0;background:none;cursor:pointer}
+.icon-btn:hover{background:#EEF3F9}
+.icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ai-btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:linear-gradient(180deg,#FFD25E,#F5B83D);color:#0B2A4A;text-decoration:none;font-family:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:600;font-size:1rem;border-radius:999px;white-space:nowrap;box-shadow:0 8px 18px -8px rgba(214,150,20,.9);transition:transform .15s ease,filter .15s ease}
+.ai-btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.ai-btn:active{transform:scale(.97)}
+.ai-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ai-btn .short{display:none}
+.burger{display:inline-flex;width:44px;height:44px;border-radius:12px;align-items:center;justify-content:center;border:0;background:none;color:#0B2A4A;cursor:pointer}
+.burger:hover{background:#EEF3F9}
+.burger svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 
-@media (min-width:900px){
-  .rh-main{display:flex}.rh .rh-cta{display:inline-flex}.rh-btn,.rh-m{display:none!important}
-  .rh-panel{display:block;position:absolute;left:0;right:0;top:100%;background:#fff;box-shadow:0 30px 40px -24px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .2s,transform .2s,visibility .2s}
-  .rh-panel.open{opacity:1;visibility:visible;transform:none}
-}
-@media (prefers-reduced-motion:reduce){.rh-arrow{animation:none}.rh *{transition:none!important}}
+.mnav{display:none;position:absolute;left:12px;right:12px;top:100%;max-width:1100px;margin:0 auto;background:#fff;border:1px solid #E6EDF5;border-radius:18px;padding:8px;box-shadow:0 18px 40px -16px rgba(11,42,74,.45);max-height:calc(100vh - 100px);overflow:auto}
+.mnav.open{display:block}
+.mnav a{display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:10px;text-decoration:none;color:#16324F;font:500 1rem 'Outfit',system-ui,sans-serif}
+.mnav a:hover{background:#EEF3F9}
+.mnav .sub{padding-left:26px;font-size:.93rem;color:#3C4F66}
+.mnav .grp{font:600 .72rem 'Outfit',system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7A8AA0;padding:10px 12px 2px}
+
+.brand:focus-visible,.ai-btn:focus-visible,.nav-links a:focus-visible,.dd>button:focus-visible,.burger:focus-visible,.icon-btn:focus-visible,.mnav a:focus-visible{outline:3px solid #1F6FB5;outline-offset:2px;border-radius:12px}
+.ai-btn:focus-visible{border-radius:999px}
+
+@media (min-width:1040px){.nav-links{display:flex}.icon-btn{display:inline-flex}.burger{display:none}.mnav{display:none!important}}
+@media (max-width:560px){.brand .tag{display:none}.ai-btn .long{display:none}.ai-btn .short{display:inline}.ai-btn{padding:0 14px}}
+@media (max-width:400px){.brand .name{font-size:1.15rem}.brand img{width:40px;height:40px}.ai-btn svg{display:none}.bar{padding-left:10px}}
+
+/* ===== AI (header ke button se khulta hai) ===== */
+#app{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:var(--sky),var(--bg);color:var(--text);padding-top:env(safe-area-inset-top,0px)}
+#app.open{display:flex}
+.top{display:flex;justify-content:space-between;align-items:center;padding:6px 12px}
+.ib{width:40px;height:40px;border:0;background:none;color:var(--text);display:grid;place-items:center;border-radius:14px;cursor:pointer}
+.ib:hover{background:rgba(120,100,200,.12)}
+.ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+:focus-visible{outline:3px solid var(--g3);outline-offset:2px}
+
+#body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:640px;margin:0 auto;padding:0 16px}
+h1{font-size:clamp(22px,6vw,30px);line-height:1.2;font-weight:600;text-align:center;margin:0 0 20px;letter-spacing:-.01em;
+  background:linear-gradient(100deg,var(--g1),var(--g2) 55%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent}
+#msgs{display:none;flex:1;min-height:0;overflow:auto;padding:8px 0 14px;flex-direction:column;gap:12px}
+.msg{max-width:86%;padding:9px 14px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.5}
+.msg.bot{background:var(--bot);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.msg.user{background:linear-gradient(100deg,var(--g2),var(--g3));color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
+.msg.user img{display:block;max-width:100%;max-height:200px;border-radius:12px;margin:2px 0 6px}
+.msg.user .fl{font-size:13px;opacity:.95;margin-bottom:4px;overflow-wrap:anywhere}
+.msg.err{border-color:#e5484d;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+.card{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:12px 12px 8px 16px;min-height:112px;display:flex;flex-direction:column;box-shadow:0 8px 30px -14px rgba(90,70,200,.25)}
+textarea:focus,textarea:focus-visible{outline:none;box-shadow:none}
+textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:400 15px/1.5 "Outfit",system-ui,sans-serif;min-height:48px;max-height:200px;padding:0}
+textarea::placeholder{color:var(--muted)}
+.row{display:flex;justify-content:flex-end;align-items:center;gap:4px;padding-top:6px}
+.circle{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;flex:none}
+.circle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#mic{background:none;color:var(--text)}
+#mic.on{background:rgba(124,58,237,.15);color:var(--g3)}
+#send{background:linear-gradient(100deg,var(--g2),var(--g3));color:#fff;display:none}
+#send:disabled{opacity:.5}
+#plusWrap{position:relative;margin-right:auto}
+#plus{background:none;color:var(--text)}
+#plus:hover,#plus.on{background:rgba(124,58,237,.12)}
+.has-text #send{display:grid}.has-text #mic{display:none}
+
+.menu{display:none;position:absolute;left:0;bottom:calc(100% + 8px);min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 10px 30px -10px rgba(60,40,140,.35);z-index:10}
+.menu.open{display:block}
+.menu button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;color:var(--text);font:500 15px "Outfit",system-ui,sans-serif;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}
+.menu button:hover{background:rgba(124,58,237,.1)}
+.menu svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+input[type=file]{display:none}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 0 8px}
+.chips:empty{display:none}
+.chip{display:flex;align-items:center;gap:6px;max-width:100%;background:rgba(124,58,237,.1);border:1px solid var(--line);border-radius:12px;padding:4px 6px 4px 4px;font-size:13px}
+.chip img{width:36px;height:36px;object-fit:cover;border-radius:8px;display:block}
+.chip .ic{width:36px;height:36px;display:grid;place-items:center;font-size:18px}
+.chip .nm{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip button{border:0;background:none;color:var(--muted);font-size:18px;line-height:1;width:24px;height:24px;border-radius:50%;cursor:pointer}
+.note{font-size:13px;color:#e5484d;padding:0 6px 8px;display:none}
+.note.show{display:block}
+
+.chatting #body{justify-content:flex-start}
+.chatting h1{display:none}
+.chatting #msgs{display:flex}
+.chatting .card{min-height:0;margin-bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:row;flex-wrap:wrap;align-items:flex-end;padding:6px 6px 6px 6px;gap:4px}
+.chatting .chips{order:-1;flex-basis:100%;padding:4px 6px 4px}
+.chatting .row{display:contents}
+.chatting #plusWrap{order:0;margin-right:0}
+.chatting textarea{order:1;flex:1;min-width:0;min-height:24px;padding:8px 0}
+.chatting #mic{order:2}
+.chatting #send{order:3}
+.sugg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 18px}
+.sugg button{border:1px solid var(--line);background:var(--card);color:var(--text);font:500 13.5px "Outfit",system-ui,sans-serif;padding:8px 14px;border-radius:999px;cursor:pointer;text-align:left;line-height:1.3}
+.sugg button:hover{background:rgba(124,58,237,.1)}
+.chatting .sugg{display:none}
+.tools{display:flex;gap:4px;margin-top:6px}
+.tools button{border:0;background:none;color:var(--muted);font:500 12.5px "Outfit",system-ui,sans-serif;cursor:pointer;padding:3px 8px;border-radius:8px}
+.tools button:hover{background:rgba(124,58,237,.1);color:var(--text)}
+.thinking{background:none!important;border:0!important;padding:4px 0!important;display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+.thinking .dot{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g3));color:#fff;display:grid;place-items:center;font-size:14px;font-weight:700;animation:pulse 1.4s ease-in-out infinite}
+.thinking .t{background:linear-gradient(100deg,var(--g3),var(--g1),var(--g2),var(--g3));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 2.2s linear infinite}
+@keyframes shine{to{background-position:-300% 0}}
+@keyframes pulse{50%{transform:scale(.85);opacity:.7}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.ai-btn{transition:none}.ai-btn:hover{transform:none}.thinking .dot,.thinking .t{animation:none}}
 </style>
+</head>
+<body>
 
-<header class="rh" id="rh">
-  <div class="rh-in">
-    <a class="rh-logo" href="/" aria-label="Rupeyantra home">
-      <span class="rh-mark" aria-hidden="true">₹</span>
-      <span><b>Rupeyantra</b><small>Smart Finance Tools</small></span>
+<header>
+  <div class="bar">
+    <a href="/" class="brand" aria-label="Rupeyantra – home">
+      <img src="/logo-icon.png" width="44" height="44" alt="Rupeyantra logo" fetchpriority="high" decoding="async">
+      <span class="txt">
+        <span class="name">Rupeyantra</span>
+        <span class="tag">Smart Finance Tools</span>
+      </span>
     </a>
 
-    <nav class="rh-main" aria-label="Main menu">
-      <a href="/">Home</a>
-      <a href="/calculators">Calculators</a>
-      <button class="rh-link" id="ddBtn" aria-expanded="false" aria-controls="ddPanel">
-        Compare
-        <svg class="rh-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>
-      </button>
-      <a href="/market-data">Market Data</a>
-      <a href="/ai">AI Assistant<span class="rh-new">NEW</span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="/ai" class="js-open-ai">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>
+        Calculators
+      </a>
+      <div class="dd">
+        <button type="button" aria-expanded="false" aria-haspopup="true">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3L3 8l5 5M3 8h12a5 5 0 0 1 0 10h-3M16 21l5-5-5-5"/></svg>
+          Compare <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="dd-menu">
+          <a href="/compare/loan-card">Loan &amp; Card Compare</a>
+          <a href="/compare/insurance">Insurance Compare</a>
+          <a href="/compare/investment">Investment / Demat Compare</a>
+          <a href="/compare/savings-fd">Savings / FD Compare</a>
+        </div>
+      </div>
+      <a href="/market-data">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+        Market Data
+      </a>
+      <a href="/ai" class="js-open-ai">
+        <svg class="ic v" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+        AI Assistant <span class="new">NEW</span>
+      </a>
+      <div class="dd">
+        <button type="button" aria-expanded="false" aria-haspopup="true">Guides <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="dd-menu">
+          <a href="/guides/loan">Loan Guide</a>
+          <a href="/guides/investment">Investment Guide</a>
+          <a href="/guides/budget">Budget &amp; Bachat Guide</a>
+        </div>
+      </div>
+      <div class="dd">
+        <button type="button" aria-expanded="false" aria-haspopup="true">More <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="dd-menu">
+          <a href="/credit-score">Credit Score</a>
+          <a href="/glossary">Glossary</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+        </div>
+      </div>
     </nav>
 
-    <a class="rh-cta" href="/calculators">Start Calculating</a>
-    <button class="rh-btn" id="rhBtn" aria-label="Menu kholo" aria-expanded="false">☰</button>
-  </div>
-
-  <div class="rh-panel" id="ddPanel">
-    <div class="rh-grid">
-      <a class="rh-card" href="/compare/loan-card">
-        <span class="rh-ic" style="background:#DCE6FF">💳</span>
-        <span><b>Loan &amp; Card Compare</b><span class="d">Loan aur credit card compare karo</span><em>Explore →</em></span>
+    <div class="actions">
+      <a href="/ai" class="icon-btn js-open-ai" aria-label="Search ya AI se poochho" title="Kuch bhi poochho">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       </a>
-      <a class="rh-card" href="/compare/insurance">
-        <span class="rh-ic" style="background:#E3DAFF">🛡️</span>
-        <span><b>Insurance Compare</b><span class="d">Insurance plans compare karo</span><em>Explore →</em></span>
+      <a href="/ai" class="ai-btn js-open-ai" title="Rupeyantra AI kholo" aria-label="Start Calculating: AI se EMI, SIP aur paise ke sawal poochho, free">
+        <span class="long">Start Calculating</span><span class="short">Start</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a class="rh-card" href="/compare/investment">
-        <span class="rh-ic" style="background:#D6F5E6">📈</span>
-        <span><b>Investment / Demat</b><span class="d">Investment platforms compare karo</span><em>Explore →</em></span>
-      </a>
-      <a class="rh-card" href="/compare/savings-fd">
-        <span class="rh-ic" style="background:#FFE0EC">🐷</span>
-        <span><b>Savings / FD Compare</b><span class="d">Savings aur FD options compare karo</span><em>Explore →</em></span>
-      </a>
+      <button type="button" class="burger" id="burger" aria-label="Menu kholo" aria-expanded="false" aria-controls="mnav">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
     </div>
   </div>
 
-  <nav class="rh-m" id="rhM" aria-label="Mobile menu">
-    <a href="/">Home</a>
-    <a href="/calculators">Calculators</a>
-    <button class="rh-link" id="mdBtn" aria-expanded="false" aria-controls="mdSub">
-      Compare
-      <svg class="rh-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>
-    </button>
-    <div class="rh-msub" id="mdSub">
-      <a href="/compare/loan-card">Loan &amp; Card Compare</a>
-      <a href="/compare/insurance">Insurance Compare</a>
-      <a href="/compare/investment">Investment / Demat</a>
-      <a href="/compare/savings-fd">Savings / FD Compare</a>
-    </div>
+  <div class="mnav" id="mnav">
+    <a href="/ai" class="js-open-ai">Calculators</a>
+    <div class="grp">Compare</div>
+    <a class="sub" href="/compare/loan-card">Loan &amp; Card Compare</a>
+    <a class="sub" href="/compare/insurance">Insurance Compare</a>
+    <a class="sub" href="/compare/investment">Investment / Demat Compare</a>
+    <a class="sub" href="/compare/savings-fd">Savings / FD Compare</a>
     <a href="/market-data">Market Data</a>
-    <a class="ai" href="/ai">✨ AI Assistant</a>
-  </nav>
+    <a href="/ai" class="js-open-ai">AI Assistant <span class="new">NEW</span></a>
+    <div class="grp">Guides</div>
+    <a class="sub" href="/guides/loan">Loan Guide</a>
+    <a class="sub" href="/guides/investment">Investment Guide</a>
+    <a class="sub" href="/guides/budget">Budget &amp; Bachat Guide</a>
+    <div class="grp">More</div>
+    <a class="sub" href="/credit-score">Credit Score</a>
+    <a class="sub" href="/glossary">Glossary</a>
+    <a class="sub" href="/about">About</a>
+    <a class="sub" href="/contact">Contact</a>
+  </div>
 </header>
 
+<div id="app" role="dialog" aria-label="Rupeyantra AI">
+  <div class="top">
+    <button class="ib" id="back" aria-label="Wapas">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="ib" id="newChat" aria-label="Naya chat">
+      <svg viewBox="0 0 24 24"><path d="M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M18.4 3.6a1.9 1.9 0 0 1 2.7 2.7L12 15.4l-3.8 1 1-3.8z"/></svg>
+    </button>
+  </div>
+
+  <main id="body">
+    <h1>Rupeyantra AI: Aapka Finance Saathi</h1>
+    <div class="sugg" id="sugg"></div>
+    <div id="msgs" aria-live="polite"></div>
+
+    <div id="dock">
+      <div id="note" class="note"></div>
+      <form class="card" id="form">
+        <div class="chips" id="chips"></div>
+        <textarea id="inp" rows="1" placeholder="Aapka agla sawal kya hai?" aria-label="Apna sawal"></textarea>
+        <div class="row">
+          <div id="plusWrap">
+            <button type="button" class="circle" id="plus" aria-label="Photo ya file jodo" aria-haspopup="true" aria-expanded="false">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+            <div class="menu" id="menu" role="menu">
+              <button type="button" id="pickPhoto" role="menuitem">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>Photo
+              </button>
+              <button type="button" id="pickFile" role="menuitem">
+                <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>File
+              </button>
+            </div>
+          </div>
+          <button type="button" class="circle" id="mic" aria-label="Bolkar poochho">
+            <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg>
+          </button>
+          <button type="submit" class="circle" id="send" aria-label="Bhejo">
+            <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </button>
+        </div>
+      </form>
+      <input type="file" id="imgIn" accept="image/*" multiple>
+      <input type="file" id="fileIn" accept=".pdf,.txt,.csv,.tsv,.json,.md,.log,application/pdf,text/plain" multiple>
+    </div>
+  </main>
+</div>
+
 <script>
-(function(){
-  var rh=document.getElementById('rh'),
-      dd=document.getElementById('ddBtn'),panel=document.getElementById('ddPanel'),
-      burger=document.getElementById('rhBtn'),m=document.getElementById('rhM'),
-      md=document.getElementById('mdBtn'),sub=document.getElementById('mdSub'),t;
-  function setDD(o){panel.classList.toggle('open',o);dd.setAttribute('aria-expanded',o)}
-  dd.onclick=function(e){e.stopPropagation();setDD(!panel.classList.contains('open'))};
-  /* computer par hover se bhi khule */
-  function enter(){if(window.innerWidth>=900){clearTimeout(t);setDD(true)}}
-  function leave(){if(window.innerWidth>=900){t=setTimeout(function(){setDD(false)},180)}}
-  [dd,panel].forEach(function(el){el.addEventListener('mouseenter',enter);el.addEventListener('mouseleave',leave)});
-  document.addEventListener('click',function(e){if(!rh.contains(e.target))setDD(false)});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')setDD(false)});
-  /* phone menu */
-  burger.onclick=function(){var o=m.classList.toggle('open');burger.setAttribute('aria-expanded',o);burger.textContent=o?'✕':'☰'};
-  md.onclick=function(){var o=sub.classList.toggle('open');md.setAttribute('aria-expanded',o)};
-  document.querySelectorAll('.rh-main a').forEach(function(a){
-    if(a.getAttribute('href')===location.pathname)a.setAttribute('aria-current','page');
+const $=id=>document.getElementById(id);
+const app=$('app'),msgs=$('msgs'),inp=$('inp'),send=$('send'),form=$('form'),mic=$('mic');
+const plus=$('plus'),menu=$('menu'),imgIn=$('imgIn'),fileIn=$('fileIn'),chips=$('chips'),note=$('note');
+let history=[],pending=[],log=[],gen=0;
+const MAX_FILES=3,MAX_B64=3800000,MAX_PDF=2500000,MAX_TEXT=12000;
+const KEY='rupeyantra_chat_v1';
+const SUGG=[
+  'EMI kaise nikalte hain?',
+  '50 lakh ka home loan 8.5% par 20 saal ke liye EMI kitni hogi?',
+  'Mahine ki 5000 ki SIP 12% par 10 saal mein kitni banegi?',
+  'Mahine ka budget kaise banaye?'
+];
+
+function refresh(){form.classList.toggle('has-text',inp.value.trim().length>0||pending.length>0)}
+function grow(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,200)+'px';refresh()}
+inp.addEventListener('input',grow);
+inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+
+/* chat save / restore (sirf is phone ke browser mein) */
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify({
+      log:log.slice(-30),
+      history:history.slice(-20).map(m=>({role:m.role,content:m.content.slice(0,4000)}))
+    }));
+  }catch(e){}
+}
+function wipe(){try{localStorage.removeItem(KEY)}catch(e){}}
+
+function add(role,text){const d=document.createElement('div');d.className='msg '+role;d.textContent=text;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
+function addUser(text,atts){
+  const d=document.createElement('div');d.className='msg user';
+  atts.forEach(a=>{
+    if(a.thumb){const im=document.createElement('img');im.src=a.thumb;im.alt=a.name;d.appendChild(im)}
+    else{const s=document.createElement('div');s.className='fl';s.textContent='📎 '+a.name;d.appendChild(s)}
   });
+  if(text){const t=document.createElement('div');t.textContent=text;d.appendChild(t)}
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function showError(bot,text){bot.classList.remove('thinking');bot.classList.add('err');bot.textContent=text}
+
+/* copy / share */
+async function copyText(t,btn){
+  let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}
+  catch(e){
+    const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{ok=document.execCommand('copy')}catch(_){}
+    ta.remove();
+  }
+  btn.textContent=ok?'Copy ho gaya ✓':'Copy nahi hua';
+  setTimeout(()=>{btn.textContent='Copy'},1800);
+}
+
+/* bot ka jawab: dheere-dheere likha hua + Copy/Share button */
+function botMsg(bot,text,animate){
+  bot.classList.remove('thinking','err');bot.innerHTML='';
+  const span=document.createElement('span');bot.appendChild(span);
+  const tools=document.createElement('div');tools.className='tools';
+  const cb=document.createElement('button');cb.type='button';cb.textContent='Copy';
+  cb.onclick=()=>copyText(text,cb);tools.appendChild(cb);
+  if(navigator.share){
+    const sb=document.createElement('button');sb.type='button';sb.textContent='Share';
+    sb.onclick=()=>{navigator.share({text:text+'\n\n- Rupeyantra AI'}).catch(()=>{})};
+    tools.appendChild(sb);
+  }
+  const finish=()=>{span.textContent=text;bot.appendChild(tools);msgs.scrollTop=msgs.scrollHeight};
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(!animate||reduce||text.length<40){finish();return}
+  const my=gen;let i=0;const step=Math.max(3,Math.ceil(text.length/90));
+  const t=setInterval(()=>{
+    if(my!==gen){clearInterval(t);return}
+    i+=step;
+    if(i>=text.length){clearInterval(t);finish();return}
+    span.textContent=text.slice(0,i);msgs.scrollTop=msgs.scrollHeight;
+  },18);
+}
+
+let noteTimer=null;
+function warn(t){note.textContent=t;note.classList.add('show');clearTimeout(noteTimer);noteTimer=setTimeout(()=>note.classList.remove('show'),5000)}
+
+/* + menu */
+function closeMenu(){menu.classList.remove('open');plus.classList.remove('on');plus.setAttribute('aria-expanded','false')}
+plus.onclick=e=>{e.stopPropagation();const o=menu.classList.toggle('open');plus.classList.toggle('on',o);plus.setAttribute('aria-expanded',o)};
+document.addEventListener('click',e=>{if(!menu.contains(e.target))closeMenu()});
+$('pickPhoto').onclick=()=>{closeMenu();imgIn.click()};
+$('pickFile').onclick=()=>{closeMenu();fileIn.click()};
+
+/* attachments */
+function readDataURL(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error('File padh nahi payi'));r.readAsDataURL(f)})}
+function readText(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error('File padh nahi payi'));r.readAsText(f)})}
+
+async function compressImage(file){
+  const url=await readDataURL(file);
+  const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('Ye photo khul nahi payi'));i.src=url});
+  const s=Math.min(1,1280/Math.max(img.width,img.height));
+  const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+  const out=c.toDataURL('image/jpeg',.82);
+  return{kind:'media',mime:'image/jpeg',data:out.split(',')[1],thumb:out,name:file.name||'photo'};
+}
+
+async function makeAttachment(file){
+  const name=file.name||'file',ext=(name.split('.').pop()||'').toLowerCase();
+  if(file.type.startsWith('image/'))return compressImage(file);
+  if(file.type==='application/pdf'||ext==='pdf'){
+    if(file.size>MAX_PDF)throw new Error('PDF badi hai (2.5 MB tak chalti hai)');
+    const d=await readDataURL(file);
+    return{kind:'media',mime:'application/pdf',data:d.split(',')[1],name};
+  }
+  if(file.type.startsWith('text/')||['txt','csv','tsv','json','md','log'].includes(ext)){
+    let t=await readText(file);
+    if(t.length>MAX_TEXT)t=t.slice(0,MAX_TEXT)+'\n...(file ka baaki hissa kaat diya gaya)';
+    return{kind:'text',name,text:t};
+  }
+  throw new Error('Ye file type abhi nahi chalta. PDF, TXT, CSV, JSON, MD bhejo.');
+}
+
+function totalB64(extra){return pending.concat(extra?[extra]:[]).reduce((n,a)=>n+(a.data?a.data.length:0),0)}
+
+function renderChips(){
+  chips.innerHTML='';
+  pending.forEach((a,i)=>{
+    const c=document.createElement('div');c.className='chip';
+    if(a.thumb){const im=document.createElement('img');im.src=a.thumb;im.alt='';c.appendChild(im)}
+    else{const ic=document.createElement('span');ic.className='ic';ic.textContent='📄';c.appendChild(ic)}
+    const nm=document.createElement('span');nm.className='nm';nm.textContent=a.name;c.appendChild(nm);
+    const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Hatao');
+    x.onclick=()=>{pending.splice(i,1);renderChips();refresh()};
+    c.appendChild(x);chips.appendChild(c);
+  });
+  refresh();
+}
+
+async function onPick(input){
+  const files=Array.from(input.files||[]);input.value='';
+  for(const f of files){
+    if(pending.length>=MAX_FILES){warn('Ek baar mein sirf '+MAX_FILES+' photo/file jod sakte ho');break}
+    try{
+      const a=await makeAttachment(f);
+      if(a.data&&totalB64(a)>MAX_B64){warn('Photo/file ka size bahut zyada hai, chhoti bhejo');continue}
+      pending.push(a);renderChips();
+    }catch(e){warn(e.message)}
+  }
+}
+imgIn.addEventListener('change',()=>onPick(imgIn));
+fileIn.addEventListener('change',()=>onPick(fileIn));
+
+/* chat */
+function buildPayload(){
+  let last=-1;history.forEach((m,i)=>{if(m.attachments)last=i});
+  return history.map((m,i)=>i===last?m:{role:m.role,content:m.content});
+}
+
+async function ask(q){
+  if((!q&&!pending.length)||send.disabled)return;
+  app.classList.add('chatting');
+  const atts=pending.slice();pending=[];renderChips();
+  let content=q;
+  if(!content)content=atts.some(a=>a.thumb)?'Is photo ko dekho aur batao isme kya hai.':'Is file ko padho aur batao isme kya hai.';
+  atts.filter(a=>a.kind==='text').forEach(a=>{content+='\n\n[File: '+a.name+']\n'+a.text});
+  const media=atts.filter(a=>a.kind==='media').map(a=>({mime:a.mime,data:a.data}));
+  inp.value='';grow();inp.style.height='auto';
+  addUser(q,atts);
+  log.push({role:'user',text:q,files:atts.map(a=>a.name)});
+  const m={role:'user',content};if(media.length)m.attachments=media;
+  history.push(m);
+  send.disabled=true;const bot=add('bot','');
+  bot.classList.add('thinking');bot.innerHTML='<span class="dot">₹</span><span class="t">Soch raha hu...</span>';
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:buildPayload()})});
+    let data=null;
+    try{data=await res.json()}catch(_){}
+    if(!res.ok||!data||!data.reply){
+      let t='Error '+res.status+'\n\n';
+      if(data&&data.message)t+=data.message;
+      else if(res.status===413)t+='Photo/file bahut badi hai. Chhoti photo ya file bhejo.';
+      else if(res.status===404)t+='/api/chat nahi mila. Check karo ki file api/chat.js naam se, api folder ke andar hai.';
+      else t+='Server se sahi jawab nahi aaya.';
+      if(data&&data.keys)t+='\n\nKeys: '+Object.keys(data.keys).map(k=>k+'='+(data.keys[k]?'mili':'NAHI mili')).join(', ');
+      showError(bot,t);history.pop();log.pop();
+    }else{
+      botMsg(bot,data.reply,true);
+      history.push({role:'assistant',content:data.reply});
+      log.push({role:'bot',text:data.reply});
+      save();
+    }
+  }catch(e){
+    showError(bot,'Network error: '+e.message+'\n\nInternet check karo aur dobara try karo.');history.pop();log.pop();
+  }finally{send.disabled=false;msgs.scrollTop=msgs.scrollHeight}
+}
+form.addEventListener('submit',e=>{e.preventDefault();ask(inp.value.trim())});
+
+$('newChat').onclick=()=>{gen++;history=[];pending=[];log=[];wipe();renderChips();msgs.innerHTML='';app.classList.remove('chatting');inp.value='';grow();inp.focus()};
+
+/* shuru ke sawal ke buttons */
+SUGG.forEach(t=>{
+  const b=document.createElement('button');b.type='button';b.textContent=t;
+  b.onclick=()=>ask(t);$('sugg').appendChild(b);
+});
+
+/* pichli chat wapas dikhao */
+(function restore(){
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(!d||!Array.isArray(d.log)||!d.log.length)return;
+    log=d.log;history=Array.isArray(d.history)?d.history:[];
+    app.classList.add('chatting');
+    log.forEach(x=>{
+      if(x.role==='user')addUser(x.text||'',(x.files||[]).map(n=>({name:n})));
+      else botMsg(add('bot',''),x.text||'',false);
+    });
+  }catch(e){}
 })();
+
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR){mic.style.display='none'}else{
+  let rec=null,on=false;
+  mic.onclick=()=>{
+    if(on){rec&&rec.stop();return}
+    rec=new SR();rec.lang='hi-IN';rec.interimResults=true;
+    rec.onresult=e=>{inp.value=Array.from(e.results).map(r=>r[0].transcript).join('');grow()};
+    rec.onend=()=>{on=false;mic.classList.remove('on')};
+    rec.onerror=()=>{on=false;mic.classList.remove('on')};
+    on=true;mic.classList.add('on');rec.start();
+  };
+}
+
+/* ===== Header ka button: AI kholo / band karo ===== */
+function openAI(push){
+  app.classList.add('open');
+  document.documentElement.style.overflow='hidden';
+  if(push){try{window.history.pushState({ai:1},'','/ai')}catch(e){}}
+}
+function closeAI(){
+  app.classList.remove('open');
+  document.documentElement.style.overflow='';
+}
+document.querySelectorAll('.js-open-ai').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();openAI(true)}));
+$('back').onclick=()=>{
+  if(window.history.state&&window.history.state.ai){window.history.back()}
+  else{closeAI();try{window.history.replaceState(null,'','/')}catch(e){}}
+};
+/* dropdown + mobile menu */
+(function(){
+  const dds=Array.from(document.querySelectorAll('.dd'));
+  const burger=$('burger'),panel=$('mnav');
+  function closeDD(){dds.forEach(d=>{d.classList.remove('open');d.firstElementChild.setAttribute('aria-expanded','false')})}
+  function closeNav(){panel.classList.remove('open');burger.setAttribute('aria-expanded','false')}
+  dds.forEach(d=>{
+    const b=d.firstElementChild;
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const was=d.classList.contains('open');
+      closeDD();
+      if(!was){d.classList.add('open');b.setAttribute('aria-expanded','true')}
+    });
+  });
+  burger.addEventListener('click',e=>{e.stopPropagation();const o=panel.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
+  panel.addEventListener('click',e=>{if(e.target.closest('a'))closeNav()});
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.dd'))closeDD();
+    if(!e.target.closest('#mnav')&&!e.target.closest('#burger'))closeNav();
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDD();closeNav()}});
+})();
+
+window.addEventListener('popstate',()=>{if(location.pathname==='/ai')openAI(false);else closeAI()});
+if(location.pathname==='/ai')openAI(false);
 </script>
+</body>
+</html>
