@@ -2,127 +2,86 @@
 <html lang="hi-IN">
 <head>
 <meta charset="utf-8">
-<title>Rupeyantra – Free AI Finance Assistant (EMI, SIP, Budget)</title>
-<meta name="description" content="Rupeyantra par EMI, SIP, loan aur budget ke sawal poochho. Free AI assistant, Hinglish mein turant jawab. Signup ki zaroorat nahi.">
-<meta name="keywords" content="Rupeyantra AI, finance AI, EMI kaise nikale, SIP kya hai, budget kaise banaye, loan, bachat">
-<meta name="robots" content="index, follow">
-<meta name="theme-color" content="#FFFFFF">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="canonical" href="https://rupyantra.vercel.app/">
-<link rel="icon" type="image/png" href="/logo-icon.png">
-<link rel="apple-touch-icon" href="/logo-icon.png">
-<meta property="og:title" content="Rupeyantra – Free AI Finance Assistant">
-<meta property="og:site_name" content="Rupeyantra">
-<meta property="og:url" content="https://rupyantra.vercel.app/">
-<meta property="og:locale" content="hi_IN">
-<meta property="og:description" content="Loan, EMI, SIP aur budget ke sawal poochho, jawab Hinglish mein.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#B7EAEA">
+<title>Rupeyantra AI – Free Finance Assistant for EMI, SIP & Budget</title>
+<meta name="description" content="Rupeyantra AI se EMI, SIP, loan, budget aur bachat ke sawal Hinglish mein poochhein. Financial concepts samjhein aur calculations mein madad paayein.">
+<!-- IMPORTANT: Deploy karne se pehle canonical aur schema URLs ko apne EXACT live domain se match karein. -->
+<link rel="canonical" href="https://rupyantra.vercel.app/ai">
+<meta property="og:title" content="Rupeyantra AI – Free Finance Assistant">
+<meta property="og:description" content="EMI, SIP, loan aur budget ke sawal Hinglish mein poochhein.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://rupyantra.vercel.app/ai">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@graph":[
-{"@type":"Organization","name":"Rupeyantra","url":"https://rupyantra.vercel.app/","logo":"https://rupyantra.vercel.app/logo-icon.png","description":"Rupeyantra ek free AI finance assistant hai jo EMI, SIP, loan aur budget ke sawalon ke jawab Hinglish mein deta hai."},
-{"@type":"WebSite","name":"Rupeyantra","url":"https://rupyantra.vercel.app/","inLanguage":"hi-IN"},
-{"@type":"WebApplication","name":"Rupeyantra AI","url":"https://rupyantra.vercel.app/ai","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"hi-IN","description":"Free AI assistant jo loan, EMI, SIP, budget aur bachat ke sawalon ke jawab Hinglish mein deta hai.","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}},
-{"@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"Rupeyantra AI kya hai?","acceptedAnswer":{"@type":"Answer","text":"Rupeyantra AI ek free assistant hai jo EMI, SIP, budget, loan aur bachat jaise paise ke sawalon ka jawab Hinglish mein deta hai."}},
-{"@type":"Question","name":"Kya Rupeyantra AI free hai?","acceptedAnswer":{"@type":"Answer","text":"Haan, Rupeyantra AI use karne ke liye koi charge ya signup nahi hai."}},
-{"@type":"Question","name":"Kya ye financial advisor hai?","acceptedAnswer":{"@type":"Answer","text":"Nahi. AI sirf jaankari deta hai. Bade nivesh ke faisle se pehle SEBI-registered advisor se salah lein."}}
-]}]}
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Rupeyantra AI",
+  "url":"https://rupyantra.vercel.app/ai",
+  "applicationCategory":"FinanceApplication",
+  "operatingSystem":"Web",
+  "inLanguage":"hi-IN",
+  "description":"AI assistant for understanding EMI, SIP, loans, budgeting and savings in Hinglish.",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}
+}
 </script>
 <style>
-:root{--text:#1b1b2f;--muted:#6f6c85;--line:#e3ddf3;--card:#fff;--bot:#fff;
---g1:#0E9AA7;--g2:#3B5BDB;--g3:#7C3AED;
---sky:linear-gradient(180deg,#B7EAEA 0%,#D9CCFF 16%,#F5F0FF 34%,#fff 58%);
---bg:#fff}
-@media (prefers-color-scheme:dark){:root{--text:#EEEAFB;--muted:#A19DBB;--line:#34304F;--card:#1B1930;--bot:#1B1930;--sky:linear-gradient(180deg,#14434C 0%,#2A2158 20%,#17142B 45%,#100F1E 70%);--bg:#100F1E}}
+:root{color-scheme:light dark;--text:#1b1b2f;--muted:#6f6c85;--line:#e3ddf3;--card:#fff;--bot:#fff;--g1:#0E9AA7;--g2:#3B5BDB;--g3:#7C3AED;--sky:linear-gradient(180deg,#B7EAEA 0%,#D9CCFF 16%,#F5F0FF 34%,#fff 58%);--bg:#fff}
+@media(prefers-color-scheme:dark){:root{--text:#EEEAFB;--muted:#A19DBB;--line:#34304F;--card:#1B1930;--bot:#1B1930;--sky:linear-gradient(180deg,#14434C 0%,#2A2158 20%,#17142B 45%,#100F1E 70%);--bg:#100F1E;color-scheme:dark}}
 *{box-sizing:border-box}
-html,body{margin:0}
-body{background:#F5F8FC;min-height:100%;font-family:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-
-/* ===== HEADER: upar logo + button, neeche poora menu (sab kuch header mein hi) ===== */
-header{position:sticky;top:0;z-index:20;background:#F5F8FC;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px}
-.bar{max-width:1100px;margin:0 auto;background:#FFFFFF;border:1px solid #E6EDF5;border-radius:20px;box-shadow:0 8px 26px -14px rgba(11,42,74,.35);overflow:hidden}
-.top-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:62px;padding:8px 10px 8px 14px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;flex:none}
-.brand img{width:44px;height:44px;flex:none;display:block;object-fit:contain}
-.brand .txt{display:flex;flex-direction:column;line-height:1.1;min-width:0}
-.brand .name{font-family:'Outfit',system-ui,sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-.01em;color:#0B2A4A}
-.brand .tag{font-family:'Outfit',system-ui,sans-serif;font-size:.72rem;font-weight:500;color:#5B6B7F;margin-top:2px;white-space:nowrap}
-
-.actions{display:flex;align-items:center;gap:6px;flex:none}
-.icon-btn{display:inline-flex;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:#0B2A4A;text-decoration:none;border:0;background:none;cursor:pointer}
-.icon-btn:hover{background:#EEF3F9}
-.icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.ai-btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:linear-gradient(180deg,#FFD25E,#F5B83D);color:#0B2A4A;text-decoration:none;font-family:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:600;font-size:1rem;border-radius:999px;white-space:nowrap;box-shadow:0 8px 18px -8px rgba(214,150,20,.9);transition:transform .15s ease,filter .15s ease}
-.ai-btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
-.ai-btn:active{transform:scale(.97)}
-.ai-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.ai-btn .short{display:none}
-
-/* menu ke saare buttons header ke andar ek line mein */
-.menu-row{display:flex;align-items:center;gap:6px;padding:8px 10px 10px;border-top:1px solid #EEF2F7;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.menu-row::-webkit-scrollbar{display:none}
-.menu-row a{flex:none;display:inline-flex;align-items:center;gap:7px;text-decoration:none;font:500 .93rem 'Outfit',system-ui,sans-serif;color:#16324F;background:#F2F6FB;padding:9px 14px;border-radius:999px;white-space:nowrap}
-.menu-row a:hover{background:#E4ECF7}
-.menu-row a.ai{background:#F0E9FF;color:#4B1FA8}
-.menu-row a.ai:hover{background:#E6DBFF}
-.menu-row svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.new{font-size:.58rem;font-weight:700;letter-spacing:.06em;background:#7C3AED;color:#fff;padding:2px 6px;border-radius:6px}
-
-.brand:focus-visible,.ai-btn:focus-visible,.menu-row a:focus-visible,.icon-btn:focus-visible{outline:3px solid #1F6FB5;outline-offset:2px;border-radius:12px}
-.ai-btn:focus-visible,.menu-row a:focus-visible{border-radius:999px}
-
-@media (min-width:900px){.menu-row{justify-content:center}}
-@media (max-width:899px){.menu-row{-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent);padding-right:28px}}
-@media (max-width:560px){.brand .tag{display:none}.ai-btn .long{display:none}.ai-btn .short{display:inline}.ai-btn{padding:0 14px}}
-@media (max-width:400px){.brand .name{font-size:1.15rem}.brand img{width:40px;height:40px}.ai-btn svg{display:none}.icon-btn{display:none}.top-row{padding-left:10px}}
-
-/* ===== AI (header ke button se khulta hai) ===== */
-#app{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:var(--sky),var(--bg);color:var(--text);padding-top:env(safe-area-inset-top,0px)}
-#app.open{display:flex}
-.top{display:flex;justify-content:space-between;align-items:center;padding:6px 12px}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,textarea{font:inherit}
+button{touch-action:manipulation}
+#app{height:100%;min-height:0;display:flex;flex-direction:column;background:var(--sky);padding-top:env(safe-area-inset-top,0px)}
+.top{display:flex;justify-content:flex-end;align-items:center;padding:6px 12px;gap:4px}
 .ib{width:40px;height:40px;border:0;background:none;color:var(--text);display:grid;place-items:center;border-radius:14px;cursor:pointer}
 .ib:hover{background:rgba(120,100,200,.12)}
-.ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.ib svg,.circle svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 :focus-visible{outline:3px solid var(--g3);outline-offset:2px}
-
-#body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:640px;margin:0 auto;padding:0 16px}
-h1{font-size:clamp(22px,6vw,30px);line-height:1.2;font-weight:600;text-align:center;margin:0 0 20px;letter-spacing:-.01em;
-  background:linear-gradient(100deg,var(--g1),var(--g2) 55%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent}
-#msgs{display:none;flex:1;min-height:0;overflow:auto;padding:8px 0 14px;flex-direction:column;gap:12px}
-.msg{max-width:86%;padding:9px 14px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.5}
+#body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;width:100%;max-width:680px;margin:0 auto;padding:0 16px}
+h1{font-size:clamp(22px,6vw,30px);line-height:1.2;font-weight:600;text-align:center;margin:0 0 20px;letter-spacing:-.01em;background:linear-gradient(100deg,var(--g1),var(--g2) 55%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.intro{font-size:14px;line-height:1.5;color:var(--muted);text-align:center;margin:-10px 0 18px}
+#msgs{display:none;flex:1;min-height:0;overflow:auto;padding:8px 2px 14px;flex-direction:column;gap:12px;overscroll-behavior:contain}
+.msg{max-width:90%;padding:10px 14px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.5}
 .msg.bot{background:var(--bot);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
 .msg.user{background:linear-gradient(100deg,var(--g2),var(--g3));color:#fff;align-self:flex-end;border-bottom-right-radius:6px}
 .msg.user img{display:block;max-width:100%;max-height:200px;border-radius:12px;margin:2px 0 6px}
 .msg.user .fl{font-size:13px;opacity:.95;margin-bottom:4px;overflow-wrap:anywhere}
-.msg.err{border-color:#e5484d;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
-
+.msg.err{border-color:#e5484d;font-size:13px}
+.msg .tools{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+.tools button{border:0;background:none;color:var(--muted);font:500 12.5px "Outfit",system-ui,sans-serif;cursor:pointer;padding:4px 8px;border-radius:8px}
+.tools button:hover{background:rgba(124,58,237,.1);color:var(--text)}
+.msg .retry{color:#d04444}
 .card{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:12px 12px 8px 16px;min-height:112px;display:flex;flex-direction:column;box-shadow:0 8px 30px -14px rgba(90,70,200,.25)}
 textarea:focus,textarea:focus-visible{outline:none;box-shadow:none}
 textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:400 15px/1.5 "Outfit",system-ui,sans-serif;min-height:48px;max-height:200px;padding:0}
 textarea::placeholder{color:var(--muted)}
 .row{display:flex;justify-content:flex-end;align-items:center;gap:4px;padding-top:6px}
 .circle{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;flex:none}
-.circle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.circle svg{width:20px;height:20px}
 #mic{background:none;color:var(--text)}
 #mic.on{background:rgba(124,58,237,.15);color:var(--g3)}
-#send{background:linear-gradient(100deg,var(--g2),var(--g3));color:#fff;display:none}
-#send:disabled{opacity:.5}
+#send,#stop{background:linear-gradient(100deg,var(--g2),var(--g3));color:#fff}
+#send{display:none}
+#stop{display:none;background:#b4232d}
+#send:disabled,#stop:disabled{opacity:.5}
 #plusWrap{position:relative;margin-right:auto}
 #plus{background:none;color:var(--text)}
 #plus:hover,#plus.on{background:rgba(124,58,237,.12)}
 .has-text #send{display:grid}.has-text #mic{display:none}
-
+.busy #stop{display:grid}.busy #send{display:none}.busy #mic{display:none}
 .menu{display:none;position:absolute;left:0;bottom:calc(100% + 8px);min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 10px 30px -10px rgba(60,40,140,.35);z-index:10}
 .menu.open{display:block}
 .menu button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;color:var(--text);font:500 15px "Outfit",system-ui,sans-serif;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left}
 .menu button:hover{background:rgba(124,58,237,.1)}
 .menu svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 input[type=file]{display:none}
-
 .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 0 8px}
 .chips:empty{display:none}
 .chip{display:flex;align-items:center;gap:6px;max-width:100%;background:rgba(124,58,237,.1);border:1px solid var(--line);border-radius:12px;padding:4px 6px 4px 4px;font-size:13px}
@@ -132,370 +91,270 @@ input[type=file]{display:none}
 .chip button{border:0;background:none;color:var(--muted);font-size:18px;line-height:1;width:24px;height:24px;border-radius:50%;cursor:pointer}
 .note{font-size:13px;color:#e5484d;padding:0 6px 8px;display:none}
 .note.show{display:block}
-
 .chatting #body{justify-content:flex-start}
-.chatting h1{display:none}
+.chatting h1,.chatting .intro{display:none}
 .chatting #msgs{display:flex}
-.chatting .card{min-height:0;margin-bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:row;flex-wrap:wrap;align-items:flex-end;padding:6px 6px 6px 6px;gap:4px}
-.chatting .chips{order:-1;flex-basis:100%;padding:4px 6px 4px}
+.chatting .card{min-height:0;margin-bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:row;flex-wrap:wrap;align-items:flex-end;padding:6px;gap:4px}
+.chatting .chips{order:-1;flex-basis:100%;padding:4px 6px}
 .chatting .row{display:contents}
 .chatting #plusWrap{order:0;margin-right:0}
 .chatting textarea{order:1;flex:1;min-width:0;min-height:24px;padding:8px 0}
 .chatting #mic{order:2}
-.chatting #send{order:3}
+.chatting #send,.chatting #stop{order:3}
 .sugg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 18px}
 .sugg button{border:1px solid var(--line);background:var(--card);color:var(--text);font:500 13.5px "Outfit",system-ui,sans-serif;padding:8px 14px;border-radius:999px;cursor:pointer;text-align:left;line-height:1.3}
 .sugg button:hover{background:rgba(124,58,237,.1)}
 .chatting .sugg{display:none}
-.tools{display:flex;gap:4px;margin-top:6px}
-.tools button{border:0;background:none;color:var(--muted);font:500 12.5px "Outfit",system-ui,sans-serif;cursor:pointer;padding:3px 8px;border-radius:8px}
-.tools button:hover{background:rgba(124,58,237,.1);color:var(--text)}
 .thinking{background:none!important;border:0!important;padding:4px 0!important;display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
 .thinking .dot{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--g1),var(--g3));color:#fff;display:grid;place-items:center;font-size:14px;font-weight:700;animation:pulse 1.4s ease-in-out infinite}
 .thinking .t{background:linear-gradient(100deg,var(--g3),var(--g1),var(--g2),var(--g3));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 2.2s linear infinite}
-@keyframes shine{to{background-position:-300% 0}}
-@keyframes pulse{50%{transform:scale(.85);opacity:.7}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}.ai-btn{transition:none}.ai-btn:hover{transform:none}.thinking .dot,.thinking .t{animation:none}}
+.legal{max-width:640px;margin:0 auto;padding:0 16px 8px;text-align:center;color:var(--muted);font-size:11px;line-height:1.4}
+@keyframes shine{to{background-position:-300% 0}}@keyframes pulse{50%{transform:scale(.85);opacity:.7}}
+@media(max-width:420px){.top{padding:4px 8px}#body{padding:0 10px}.msg{max-width:94%;font-size:14.5px}.card{padding-left:12px}.sugg button{font-size:12.5px;padding:8px 11px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}.thinking .dot,.thinking .t{animation:none}}
 </style>
 </head>
 <body>
-
-<header>
-  <div class="bar">
-    <div class="top-row">
-      <a href="/" class="brand" aria-label="Rupeyantra – home">
-        <img src="/logo-icon.png" width="44" height="44" alt="Rupeyantra logo" fetchpriority="high" decoding="async">
-        <span class="txt">
-          <span class="name">Rupeyantra</span>
-          <span class="tag">Smart Finance Tools</span>
-        </span>
-      </a>
-
-      <div class="actions">
-        <a href="/ai" class="icon-btn js-open-ai" aria-label="Search ya AI se poochho" title="Kuch bhi poochho">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-        </a>
-        <a href="/ai" class="ai-btn js-open-ai" title="Rupeyantra AI kholo" aria-label="Start Calculating: AI se EMI, SIP aur paise ke sawal poochho, free">
-          <span class="long">Start Calculating</span><span class="short">Start</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <nav class="menu-row" aria-label="Main">
-      <a href="/ai" class="js-open-ai">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>
-        Calculators
-      </a>
-      <a href="/ai" class="ai js-open-ai">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
-        AI Assistant <span class="new">NEW</span>
-      </a>
-      <a href="/compare">Compare</a>
-      <a href="/market-data">Market Data</a>
-      <a href="/guides">Guides</a>
-      <a href="/credit-score">Credit Score</a>
-      <a href="/glossary">Glossary</a>
-      <a href="/about">About</a>
-    </nav>
-  </div>
-</header>
-
-<div id="app" role="dialog" aria-label="Rupeyantra AI">
+<div id="app">
   <div class="top">
-    <button class="ib" id="back" aria-label="Wapas">
-      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <button class="ib" id="newChat" aria-label="Naya chat">
+    <button class="ib" id="newChat" aria-label="Naya chat" title="Naya chat">
       <svg viewBox="0 0 24 24"><path d="M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M18.4 3.6a1.9 1.9 0 0 1 2.7 2.7L12 15.4l-3.8 1 1-3.8z"/></svg>
     </button>
   </div>
-
   <main id="body">
     <h1>Rupeyantra AI: Aapka Finance Saathi</h1>
+    <p class="intro">EMI, SIP, loan, budget aur bachat ke sawal aasaan Hinglish mein poochhein.</p>
     <div class="sugg" id="sugg"></div>
-    <div id="msgs" aria-live="polite"></div>
-
+    <div id="msgs" aria-live="polite" aria-relevant="additions text"></div>
     <div id="dock">
-      <div id="note" class="note"></div>
+      <div id="note" class="note" role="status" aria-live="polite"></div>
       <form class="card" id="form">
         <div class="chips" id="chips"></div>
-        <textarea id="inp" rows="1" placeholder="Aapka agla sawal kya hai?" aria-label="Apna sawal"></textarea>
+        <textarea id="inp" rows="1" placeholder="Aapka agla sawal kya hai?" aria-label="Apna sawal" autocomplete="off"></textarea>
         <div class="row">
           <div id="plusWrap">
             <button type="button" class="circle" id="plus" aria-label="Photo ya file jodo" aria-haspopup="true" aria-expanded="false">
               <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
             </button>
             <div class="menu" id="menu" role="menu">
-              <button type="button" id="pickPhoto" role="menuitem">
-                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>Photo
-              </button>
-              <button type="button" id="pickFile" role="menuitem">
-                <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>File
-              </button>
+              <button type="button" id="pickPhoto" role="menuitem"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 9"/></svg>Photo</button>
+              <button type="button" id="pickFile" role="menuitem"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>File</button>
             </div>
           </div>
-          <button type="button" class="circle" id="mic" aria-label="Bolkar poochho">
-            <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg>
-          </button>
-          <button type="submit" class="circle" id="send" aria-label="Bhejo">
-            <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-          </button>
+          <button type="button" class="circle" id="mic" aria-label="Bolkar poochho" title="Bolkar poochho"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></svg></button>
+          <button type="button" class="circle" id="stop" aria-label="Response roko" title="Response roko"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+          <button type="submit" class="circle" id="send" aria-label="Bhejo" title="Bhejo"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
         </div>
       </form>
       <input type="file" id="imgIn" accept="image/*" multiple>
       <input type="file" id="fileIn" accept=".pdf,.txt,.csv,.tsv,.json,.md,.log,application/pdf,text/plain" multiple>
     </div>
   </main>
+  <footer class="legal">Rupeyantra AI general information deta hai, personal financial advice nahi. Investment decisions se pehle apni research karein aur zaroorat par SEBI-registered adviser se salah lein.</footer>
 </div>
-
 <script>
+'use strict';
 const $=id=>document.getElementById(id);
-const app=$('app'),msgs=$('msgs'),inp=$('inp'),send=$('send'),form=$('form'),mic=$('mic');
+const app=$('app'),msgs=$('msgs'),inp=$('inp'),send=$('send'),stopBtn=$('stop'),form=$('form'),mic=$('mic');
 const plus=$('plus'),menu=$('menu'),imgIn=$('imgIn'),fileIn=$('fileIn'),chips=$('chips'),note=$('note');
-let history=[],pending=[],log=[],gen=0;
-const MAX_FILES=3,MAX_B64=3800000,MAX_PDF=2500000,MAX_TEXT=12000;
-const KEY='rupeyantra_chat_v1';
-const SUGG=[
-  'EMI kaise nikalte hain?',
-  '50 lakh ka home loan 8.5% par 20 saal ke liye EMI kitni hogi?',
-  'Mahine ki 5000 ki SIP 12% par 10 saal mein kitni banegi?',
-  'Mahine ka budget kaise banaye?'
-];
-
+let history=[],pending=[],log=[],gen=0,controller=null,activeBot=null,requestBusy=false,noteTimer=null,recognition=null;
+const MAX_FILES=3,MAX_B64=3800000,MAX_PDF=2500000,MAX_TEXT=12000,MAX_TEXT_FILE=500000;
+const KEY='rupeyantra_chat_v2',DB_NAME='rupeyantra_ai_files',DB_STORE='sessions';
+const SUGG=['EMI kaise nikalte hain?','50 lakh ka home loan 8.5% par 20 saal ke liye EMI kitni hogi?','Mahine ki 5000 ki SIP 12% par 10 saal mein kitni banegi?','Mahine ka budget kaise banaye?'];
 function refresh(){form.classList.toggle('has-text',inp.value.trim().length>0||pending.length>0)}
 function grow(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,200)+'px';refresh()}
 inp.addEventListener('input',grow);
 inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
-
-/* chat save / restore (sirf is phone ke browser mein) */
+function warn(t){note.textContent=t;note.classList.add('show');clearTimeout(noteTimer);noteTimer=setTimeout(()=>note.classList.remove('show'),6000)}
+function closeMenu(){menu.classList.remove('open');plus.classList.remove('on');plus.setAttribute('aria-expanded','false')}
+plus.onclick=e=>{e.stopPropagation();const o=menu.classList.toggle('open');plus.classList.toggle('on',o);plus.setAttribute('aria-expanded',String(o))};
+document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!plus.contains(e.target))closeMenu()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+$('pickPhoto').onclick=()=>{closeMenu();imgIn.click()};
+$('pickFile').onclick=()=>{closeMenu();fileIn.click()};
+function openDB(){return new Promise((resolve,reject)=>{if(!('indexedDB'in window)){reject(new Error('IndexedDB unavailable'));return}const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DB_STORE))r.result.createObjectStore(DB_STORE)};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function dbPut(value){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).put(value,KEY);tx.oncomplete=()=>{db.close();resolve()};tx.onerror=()=>{db.close();reject(tx.error)}})}
+async function dbGet(){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readonly'),r=tx.objectStore(DB_STORE).get(KEY);r.onsuccess=()=>{db.close();resolve(r.result||null)};r.onerror=()=>{db.close();reject(r.error)}})}
+async function dbDelete(){try{const db=await openDB();await new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,'readwrite');tx.objectStore(DB_STORE).delete(KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()}catch(_){}}
+let saveQueue=Promise.resolve();
 function save(){
-  try{
-    localStorage.setItem(KEY,JSON.stringify({
-      log:log.slice(-30),
-      history:history.slice(-20).map(m=>({role:m.role,content:m.content.slice(0,4000)}))
-    }));
-  }catch(e){}
+  // File payloads (including base64 photos/PDFs) are kept in IndexedDB, not localStorage.
+  const snapshot={log:log.slice(-60),history:history.slice(-40),savedAt:Date.now()};
+  saveQueue=saveQueue.then(()=>dbPut(snapshot)).catch(async()=>{
+    try{localStorage.setItem(KEY,JSON.stringify({log:log.slice(-30),history:history.slice(-20).map(m=>({role:m.role,content:m.content,attachments:(m.attachments||[]).map(a=>({kind:a.kind,name:a.name,mime:a.mime,text:a.text,thumb:a.thumb||null,data:undefined,unavailable:!!a.data}))}))}))}catch(_){}
+  });
 }
-function wipe(){try{localStorage.removeItem(KEY)}catch(e){}}
-
+async function wipe(){try{await saveQueue}catch(_){}try{localStorage.removeItem(KEY);localStorage.removeItem('rupeyantra_chat_v1')}catch(_){}await dbDelete()}
 function add(role,text){const d=document.createElement('div');d.className='msg '+role;d.textContent=text;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
 function addUser(text,atts){
   const d=document.createElement('div');d.className='msg user';
-  atts.forEach(a=>{
-    if(a.thumb){const im=document.createElement('img');im.src=a.thumb;im.alt=a.name;d.appendChild(im)}
-    else{const s=document.createElement('div');s.className='fl';s.textContent='📎 '+a.name;d.appendChild(s)}
-  });
+  (atts||[]).forEach(a=>{if(a.thumb){const im=document.createElement('img');im.src=a.thumb;im.alt=a.name||'Uploaded photo';d.appendChild(im)}else{const s=document.createElement('div');s.className='fl';s.textContent='📎 '+(a.name||'File');d.appendChild(s)}});
   if(text){const t=document.createElement('div');t.textContent=text;d.appendChild(t)}
-  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;
 }
-function showError(bot,text){bot.classList.remove('thinking');bot.classList.add('err');bot.textContent=text}
-
-/* copy / share */
+function showError(bot,text,retryFn){
+  bot.classList.remove('thinking');bot.classList.add('err');bot.textContent=text;
+  const tools=document.createElement('div');tools.className='tools';
+  const retry=document.createElement('button');retry.type='button';retry.className='retry';retry.textContent='Dobara try karein';retry.onclick=retryFn;tools.appendChild(retry);
+  bot.appendChild(tools);msgs.scrollTop=msgs.scrollHeight;
+}
 async function copyText(t,btn){
-  let ok=false;
-  try{await navigator.clipboard.writeText(t);ok=true}
-  catch(e){
-    const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
-    document.body.appendChild(ta);ta.select();
-    try{ok=document.execCommand('copy')}catch(_){}
-    ta.remove();
-  }
-  btn.textContent=ok?'Copy ho gaya ✓':'Copy nahi hua';
-  setTimeout(()=>{btn.textContent='Copy'},1800);
+  let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy')}catch(_){}ta.remove()}
+  btn.textContent=ok?'Copy ho gaya ✓':'Copy nahi hua';setTimeout(()=>{if(btn.isConnected)btn.textContent='Copy'},1800);
 }
-
-/* bot ka jawab: dheere-dheere likha hua + Copy/Share button */
 function botMsg(bot,text,animate){
   bot.classList.remove('thinking','err');bot.innerHTML='';
   const span=document.createElement('span');bot.appendChild(span);
   const tools=document.createElement('div');tools.className='tools';
-  const cb=document.createElement('button');cb.type='button';cb.textContent='Copy';
-  cb.onclick=()=>copyText(text,cb);tools.appendChild(cb);
-  if(navigator.share){
-    const sb=document.createElement('button');sb.type='button';sb.textContent='Share';
-    sb.onclick=()=>{navigator.share({text:text+'\n\n- Rupeyantra AI'}).catch(()=>{})};
-    tools.appendChild(sb);
-  }
-  const finish=()=>{span.textContent=text;bot.appendChild(tools);msgs.scrollTop=msgs.scrollHeight};
+  const cb=document.createElement('button');cb.type='button';cb.textContent='Copy';cb.onclick=()=>copyText(text,cb);tools.appendChild(cb);
+  if(navigator.share){const sb=document.createElement('button');sb.type='button';sb.textContent='Share';sb.onclick=()=>navigator.share({text:text+'\n\n- Rupeyantra AI'}).catch(()=>{});tools.appendChild(sb)}
+  const finish=()=>{if(!bot.isConnected)return;span.textContent=text;bot.appendChild(tools);msgs.scrollTop=msgs.scrollHeight};
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
   if(!animate||reduce||text.length<40){finish();return}
   const my=gen;let i=0;const step=Math.max(3,Math.ceil(text.length/90));
-  const t=setInterval(()=>{
-    if(my!==gen){clearInterval(t);return}
-    i+=step;
-    if(i>=text.length){clearInterval(t);finish();return}
-    span.textContent=text.slice(0,i);msgs.scrollTop=msgs.scrollHeight;
-  },18);
+  const timer=setInterval(()=>{if(my!==gen||!bot.isConnected){clearInterval(timer);return}i+=step;if(i>=text.length){clearInterval(timer);finish();return}span.textContent=text.slice(0,i);msgs.scrollTop=msgs.scrollHeight},18);
 }
-
-let noteTimer=null;
-function warn(t){note.textContent=t;note.classList.add('show');clearTimeout(noteTimer);noteTimer=setTimeout(()=>note.classList.remove('show'),5000)}
-
-/* + menu */
-function closeMenu(){menu.classList.remove('open');plus.classList.remove('on');plus.setAttribute('aria-expanded','false')}
-plus.onclick=e=>{e.stopPropagation();const o=menu.classList.toggle('open');plus.classList.toggle('on',o);plus.setAttribute('aria-expanded',o)};
-document.addEventListener('click',e=>{if(!menu.contains(e.target))closeMenu()});
-$('pickPhoto').onclick=()=>{closeMenu();imgIn.click()};
-$('pickFile').onclick=()=>{closeMenu();fileIn.click()};
-
-/* attachments */
 function readDataURL(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error('File padh nahi payi'));r.readAsDataURL(f)})}
 function readText(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error('File padh nahi payi'));r.readAsText(f)})}
-
 async function compressImage(file){
+  if(file.size>12*1024*1024)throw new Error('Photo 12 MB se chhoti honi chahiye.');
   const url=await readDataURL(file);
   const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('Ye photo khul nahi payi'));i.src=url});
-  const s=Math.min(1,1280/Math.max(img.width,img.height));
-  const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
-  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
-  const out=c.toDataURL('image/jpeg',.82);
-  return{kind:'media',mime:'image/jpeg',data:out.split(',')[1],thumb:out,name:file.name||'photo'};
+  const s=Math.min(1,1280/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));
+  const x=c.getContext('2d');if(!x)throw new Error('Photo process nahi ho payi');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+  const out=c.toDataURL('image/jpeg',.78);return{kind:'media',mime:'image/jpeg',data:out.split(',')[1],thumb:out,name:file.name||'photo'};
 }
-
 async function makeAttachment(file){
   const name=file.name||'file',ext=(name.split('.').pop()||'').toLowerCase();
   if(file.type.startsWith('image/'))return compressImage(file);
   if(file.type==='application/pdf'||ext==='pdf'){
     if(file.size>MAX_PDF)throw new Error('PDF badi hai (2.5 MB tak chalti hai)');
-    const d=await readDataURL(file);
-    return{kind:'media',mime:'application/pdf',data:d.split(',')[1],name};
+    const d=await readDataURL(file);return{kind:'media',mime:'application/pdf',data:d.split(',')[1],name};
   }
   if(file.type.startsWith('text/')||['txt','csv','tsv','json','md','log'].includes(ext)){
-    let t=await readText(file);
-    if(t.length>MAX_TEXT)t=t.slice(0,MAX_TEXT)+'\n...(file ka baaki hissa kaat diya gaya)';
+    if(file.size>MAX_TEXT_FILE)throw new Error('Text file 500 KB se chhoti honi chahiye.');
+    let t=await readText(file);if(t.length>MAX_TEXT)t=t.slice(0,MAX_TEXT)+'\n...(file ka baaki hissa kaat diya gaya)';
     return{kind:'text',name,text:t};
   }
-  throw new Error('Ye file type abhi nahi chalta. PDF, TXT, CSV, JSON, MD bhejo.');
+  throw new Error('Ye file type abhi nahi chalta. PDF, TXT, CSV, TSV, JSON, MD ya LOG bhejo.');
 }
-
 function totalB64(extra){return pending.concat(extra?[extra]:[]).reduce((n,a)=>n+(a.data?a.data.length:0),0)}
-
 function renderChips(){
   chips.innerHTML='';
-  pending.forEach((a,i)=>{
-    const c=document.createElement('div');c.className='chip';
-    if(a.thumb){const im=document.createElement('img');im.src=a.thumb;im.alt='';c.appendChild(im)}
-    else{const ic=document.createElement('span');ic.className='ic';ic.textContent='📄';c.appendChild(ic)}
+  pending.forEach((a,i)=>{const c=document.createElement('div');c.className='chip';if(a.thumb){const im=document.createElement('img');im.src=a.thumb;im.alt='';c.appendChild(im)}else{const ic=document.createElement('span');ic.className='ic';ic.textContent='📄';c.appendChild(ic)}
     const nm=document.createElement('span');nm.className='nm';nm.textContent=a.name;c.appendChild(nm);
-    const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Hatao');
-    x.onclick=()=>{pending.splice(i,1);renderChips();refresh()};
-    c.appendChild(x);chips.appendChild(c);
-  });
+    const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label',a.name+' hatao');x.onclick=()=>{pending.splice(i,1);renderChips()};c.appendChild(x);chips.appendChild(c)});
   refresh();
 }
-
+let picking=false;
 async function onPick(input){
-  const files=Array.from(input.files||[]);input.value='';
-  for(const f of files){
-    if(pending.length>=MAX_FILES){warn('Ek baar mein sirf '+MAX_FILES+' photo/file jod sakte ho');break}
-    try{
-      const a=await makeAttachment(f);
-      if(a.data&&totalB64(a)>MAX_B64){warn('Photo/file ka size bahut zyada hai, chhoti bhejo');continue}
-      pending.push(a);renderChips();
-    }catch(e){warn(e.message)}
+  if(picking)return;picking=true;const files=Array.from(input.files||[]);input.value='';
+  try{for(const f of files){if(pending.length>=MAX_FILES){warn('Ek baar mein sirf '+MAX_FILES+' photo/file jod sakte ho');break}
+    try{const a=await makeAttachment(f);if(a.data&&totalB64(a)>MAX_B64){warn('Photo/file ka combined size zyada hai. Chhoti file bhejo.');continue}pending.push(a);renderChips()}catch(e){warn(e.message||'File process nahi hui')}}
+  }finally{picking=false}
+}
+imgIn.addEventListener('change',()=>onPick(imgIn));fileIn.addEventListener('change',()=>onPick(fileIn));
+function buildPayload(){return history.map(m=>{const o={role:m.role,content:m.content};if(m.attachments&&m.attachments.length){const media=m.attachments.filter(a=>a.kind==='media'&&a.mime&&a.data);if(media.length)o.attachments=media.map(a=>({mime:a.mime,data:a.data}));}return o})}
+function setBusy(on){requestBusy=on;form.classList.toggle('busy',on);send.disabled=on;stopBtn.disabled=!on;inp.disabled=on;plus.disabled=on;mic.disabled=on}
+function makeUserContent(q,atts){
+  let content=q;const textFiles=atts.filter(a=>a.kind==='text');
+  if(!content&&atts.length)content=atts.some(a=>a.thumb)?'Is photo ko dekho aur batao isme kya hai.':'Is file ko padho aur batao isme kya hai.';
+  textFiles.forEach(a=>{content+='\n\n[File: '+a.name+']\n'+a.text});
+  return content;
+}
+async function sendHistoryRequest(bot,requestGen){
+  const snapshot=buildPayload();
+  controller=new AbortController();const localController=controller;
+  const timeout=setTimeout(()=>localController.abort(new DOMException('Request timeout','TimeoutError')),60000);
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:snapshot}),signal:localController.signal});
+    let data=null;try{data=await res.json()}catch(_){}
+    if(requestGen!==gen)return;
+    if(!res.ok||!data||typeof data.reply!=='string'||!data.reply.trim()){
+      let t='Server error '+res.status+'.\n\n';
+      if(data&&data.message)t+=String(data.message).slice(0,500);
+      else if(res.status===413)t+='Photo/file bahut badi hai. Chhoti photo ya file bhejo.';
+      else if(res.status===404)t+='/api/chat route nahi mila. Vercel par api/chat.js aur deployment check karein.';
+      else t+='Server se sahi jawab nahi aaya.';
+      throw Object.assign(new Error(t),{safeMessage:t});
+    }
+    history.push({role:'assistant',content:data.reply});log.push({role:'bot',text:data.reply});save();
+    botMsg(bot,data.reply,true);
+  }catch(e){
+    if(requestGen!==gen)return;
+    if(e.name==='AbortError'||e.name==='TimeoutError'){
+      const t=e.name==='TimeoutError'?'Request mein 60 seconds se zyada lag gaye. Internet/server check karke dobara try karein.':'Response rok diya gaya.';
+      showError(bot,t,()=>retryLast(bot));bot.dataset.failed='true';
+    }else{
+      showError(bot,e.safeMessage||'Network error. Internet check karein aur dobara try karein.',()=>retryLast(bot));bot.dataset.failed='true';
+    }
+    // Keep the user message in history so Retry can resend the same conversation.
+    save();
+  }finally{
+    clearTimeout(timeout);
+    if(requestGen===gen&&controller===localController){controller=null;setBusy(false);activeBot=null}
   }
 }
-imgIn.addEventListener('change',()=>onPick(imgIn));
-fileIn.addEventListener('change',()=>onPick(fileIn));
-
-/* chat */
-function buildPayload(){
-  let last=-1;history.forEach((m,i)=>{if(m.attachments)last=i});
-  return history.map((m,i)=>i===last?m:{role:m.role,content:m.content});
-}
-
 async function ask(q){
-  if((!q&&!pending.length)||send.disabled)return;
-  app.classList.add('chatting');
+  q=(q||'').trim();if((!q&&!pending.length)||requestBusy)return;
+  app.classList.add('chatting');closeMenu();
   const atts=pending.slice();pending=[];renderChips();
-  let content=q;
-  if(!content)content=atts.some(a=>a.thumb)?'Is photo ko dekho aur batao isme kya hai.':'Is file ko padho aur batao isme kya hai.';
-  atts.filter(a=>a.kind==='text').forEach(a=>{content+='\n\n[File: '+a.name+']\n'+a.text});
-  const media=atts.filter(a=>a.kind==='media').map(a=>({mime:a.mime,data:a.data}));
+  const content=makeUserContent(q,atts);
   inp.value='';grow();inp.style.height='auto';
-  addUser(q,atts);
-  log.push({role:'user',text:q,files:atts.map(a=>a.name)});
-  const m={role:'user',content};if(media.length)m.attachments=media;
-  history.push(m);
-  send.disabled=true;const bot=add('bot','');
-  bot.classList.add('thinking');bot.innerHTML='<span class="dot">₹</span><span class="t">Soch raha hu...</span>';
-  try{
-    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:buildPayload()})});
-    let data=null;
-    try{data=await res.json()}catch(_){}
-    if(!res.ok||!data||!data.reply){
-      let t='Error '+res.status+'\n\n';
-      if(data&&data.message)t+=data.message;
-      else if(res.status===413)t+='Photo/file bahut badi hai. Chhoti photo ya file bhejo.';
-      else if(res.status===404)t+='/api/chat nahi mila. Check karo ki file api/chat.js naam se, api folder ke andar hai.';
-      else t+='Server se sahi jawab nahi aaya.';
-      if(data&&data.keys)t+='\n\nKeys: '+Object.keys(data.keys).map(k=>k+'='+(data.keys[k]?'mili':'NAHI mili')).join(', ');
-      showError(bot,t);history.pop();log.pop();
-    }else{
-      botMsg(bot,data.reply,true);
-      history.push({role:'assistant',content:data.reply});
-      log.push({role:'bot',text:data.reply});
-      save();
-    }
-  }catch(e){
-    showError(bot,'Network error: '+e.message+'\n\nInternet check karo aur dobara try karo.');history.pop();log.pop();
-  }finally{send.disabled=false;msgs.scrollTop=msgs.scrollHeight}
+  addUser(q,atts);log.push({role:'user',text:q,files:atts.map(a=>a.name)});
+  const media=atts.filter(a=>a.kind==='media').map(a=>({kind:'media',mime:a.mime,data:a.data,name:a.name,thumb:a.thumb}));
+  const textAtts=atts.filter(a=>a.kind==='text').map(a=>({kind:'text',name:a.name,text:a.text}));
+  const m={role:'user',content};const combined=media.concat(textAtts);if(combined.length)m.attachments=combined;
+  history.push(m);save();
+  const bot=add('bot','');bot.classList.add('thinking');bot.innerHTML='<span class="dot">₹</span><span class="t">Soch raha hoon...</span>';
+  activeBot=bot;const requestGen=++gen;setBusy(true);
+  await sendHistoryRequest(bot,requestGen);
 }
-form.addEventListener('submit',e=>{e.preventDefault();ask(inp.value.trim())});
-
-$('newChat').onclick=()=>{gen++;history=[];pending=[];log=[];wipe();renderChips();msgs.innerHTML='';app.classList.remove('chatting');inp.value='';grow();inp.focus()};
-
-/* shuru ke sawal ke buttons */
-SUGG.forEach(t=>{
-  const b=document.createElement('button');b.type='button';b.textContent=t;
-  b.onclick=()=>ask(t);$('sugg').appendChild(b);
+function retryLast(bot){
+  if(requestBusy)return;
+  if(bot&&bot.isConnected)bot.remove();
+  const target=activeBot;
+  const retryBot=add('bot','');retryBot.classList.add('thinking');retryBot.innerHTML='<span class="dot">₹</span><span class="t">Dobara try kar raha hoon...</span>';
+  activeBot=retryBot;const requestGen=++gen;setBusy(true);sendHistoryRequest(retryBot,requestGen);
+}
+form.addEventListener('submit',e=>{e.preventDefault();ask(inp.value)});
+stopBtn.addEventListener('click',()=>{
+  if(!requestBusy)return;gen++;if(controller)controller.abort();controller=null;
+  if(activeBot&&activeBot.isConnected)showError(activeBot,'Response aapne rok diya.',()=>retryLast(activeBot));
+  activeBot=null;setBusy(false);save();
 });
-
-/* pichli chat wapas dikhao */
-(function restore(){
-  try{
-    const d=JSON.parse(localStorage.getItem(KEY)||'null');
-    if(!d||!Array.isArray(d.log)||!d.log.length)return;
-    log=d.log;history=Array.isArray(d.history)?d.history:[];
-    app.classList.add('chatting');
-    log.forEach(x=>{
-      if(x.role==='user')addUser(x.text||'',(x.files||[]).map(n=>({name:n})));
-      else botMsg(add('bot',''),x.text||'',false);
-    });
-  }catch(e){}
-})();
-
+$('newChat').onclick=async()=>{
+  gen++;if(controller)controller.abort();controller=null;activeBot=null;setBusy(false);
+  if(recognition){try{recognition.stop()}catch(_){}}
+  history=[];pending=[];log=[];await wipe();renderChips();msgs.innerHTML='';app.classList.remove('chatting');inp.value='';grow();inp.disabled=false;inp.focus();
+};
+SUGG.forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>ask(t);$('sugg').appendChild(b)});
+async function restore(){
+  let d=null;try{d=await dbGet()}catch(_){}
+  if(!d){try{d=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem('rupeyantra_chat_v1')||'null')}catch(_){}}
+  if(!d||!Array.isArray(d.log)||!d.log.length)return;
+  log=Array.isArray(d.log)?d.log:[];
+  history=Array.isArray(d.history)?d.history:[];
+  app.classList.add('chatting');
+  log.forEach(x=>{if(x.role==='user')addUser(x.text||'',(x.files||[]).map(n=>({name:n})));else botMsg(add('bot',''),x.text||'',false)});
+  // If the fallback storage had to omit binary data, tell the user instead of silently pretending it is attached.
+  const missing=history.some(m=>(m.attachments||[]).some(a=>a.unavailable));
+  if(missing)warn('Pichhli chat ke kuch photo/PDF browser storage limit ki wajah se restore nahi hue. Unhe dobara attach karein.');
+}
+restore();
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SR){mic.style.display='none'}else{
-  let rec=null,on=false;
+  let on=false;
   mic.onclick=()=>{
-    if(on){rec&&rec.stop();return}
-    rec=new SR();rec.lang='hi-IN';rec.interimResults=true;
-    rec.onresult=e=>{inp.value=Array.from(e.results).map(r=>r[0].transcript).join('');grow()};
-    rec.onend=()=>{on=false;mic.classList.remove('on')};
-    rec.onerror=()=>{on=false;mic.classList.remove('on')};
-    on=true;mic.classList.add('on');rec.start();
+    if(on){recognition&&recognition.stop();return}
+    recognition=new SR();recognition.lang='hi-IN';recognition.interimResults=true;recognition.continuous=false;
+    recognition.onresult=e=>{inp.value=Array.from(e.results).map(r=>r[0].transcript).join('');grow()};
+    recognition.onend=()=>{on=false;mic.classList.remove('on');inp.focus()};
+    recognition.onerror=e=>{on=false;mic.classList.remove('on');if(e.error!=='aborted')warn('Voice input nahi chal paya. Microphone permission check karein.')};
+    on=true;mic.classList.add('on');try{recognition.start()}catch(_){on=false;mic.classList.remove('on');warn('Voice input start nahi hua. Dobara try karein.')}
   };
 }
-
-/* ===== Header ka button: AI kholo / band karo ===== */
-function openAI(push){
-  app.classList.add('open');
-  document.documentElement.style.overflow='hidden';
-  if(push){try{window.history.pushState({ai:1},'','/ai')}catch(e){}}
-}
-function closeAI(){
-  app.classList.remove('open');
-  document.documentElement.style.overflow='';
-}
-document.querySelectorAll('.js-open-ai').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();openAI(true)}));
-$('back').onclick=()=>{
-  if(window.history.state&&window.history.state.ai){window.history.back()}
-  else{closeAI();try{window.history.replaceState(null,'','/')}catch(e){}}
-};
-window.addEventListener('popstate',()=>{if(location.pathname==='/ai')openAI(false);else closeAI()});
-if(location.pathname==='/ai')openAI(false);
+grow();
 </script>
 </body>
 </html>
