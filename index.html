@@ -42,31 +42,18 @@
 html,body{margin:0}
 body{background:#F5F8FC;min-height:100%;font-family:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 
-/* ===== HEADER (Minimal White, design 3) ===== */
+/* ===== HEADER: upar logo + button, neeche poora menu (sab kuch header mein hi) ===== */
 header{position:sticky;top:0;z-index:20;background:#F5F8FC;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px}
-.bar{max-width:1100px;margin:0 auto;background:#FFFFFF;border:1px solid #E6EDF5;border-radius:20px;box-shadow:0 8px 26px -14px rgba(11,42,74,.35);min-height:64px;padding:8px 10px 8px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bar{max-width:1100px;margin:0 auto;background:#FFFFFF;border:1px solid #E6EDF5;border-radius:20px;box-shadow:0 8px 26px -14px rgba(11,42,74,.35);overflow:hidden}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:62px;padding:8px 10px 8px 14px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;flex:none}
-.brand img{width:44px;height:44px;flex:none;display:block}
+.brand img{width:44px;height:44px;flex:none;display:block;object-fit:contain}
 .brand .txt{display:flex;flex-direction:column;line-height:1.1;min-width:0}
 .brand .name{font-family:'Outfit',system-ui,sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-.01em;color:#0B2A4A}
 .brand .tag{font-family:'Outfit',system-ui,sans-serif;font-size:.72rem;font-weight:500;color:#5B6B7F;margin-top:2px;white-space:nowrap}
 
-.nav-links{display:none;align-items:center;gap:2px;margin:0 auto;font-family:'Outfit',system-ui,sans-serif}
-.nav-links>a,.dd>button{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font:500 .95rem 'Outfit',system-ui,sans-serif;color:#16324F;padding:9px 11px;border-radius:12px;border:0;background:none;cursor:pointer;white-space:nowrap}
-.nav-links>a:hover,.dd>button:hover,.dd.open>button{background:#EEF3F9}
-.nav-links .ic{width:18px;height:18px;fill:none;stroke:#1F6FB5;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.nav-links .ic.v{stroke:#7C3AED}
-.chev{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
-.dd.open .chev{transform:rotate(180deg)}
-.dd{position:relative}
-.dd-menu{display:none;position:absolute;top:calc(100% + 8px);left:0;min-width:230px;background:#fff;border:1px solid #E6EDF5;border-radius:14px;padding:6px;box-shadow:0 14px 34px -14px rgba(11,42,74,.4);z-index:30}
-.dd.open .dd-menu{display:block}
-.dd-menu a{display:block;padding:10px 12px;border-radius:10px;text-decoration:none;color:#16324F;font:500 .93rem 'Outfit',system-ui,sans-serif}
-.dd-menu a:hover{background:#EEF3F9}
-.new{font-size:.6rem;font-weight:700;letter-spacing:.06em;background:#7C3AED;color:#fff;padding:2px 6px;border-radius:6px}
-
-.actions{display:flex;align-items:center;gap:8px;flex:none}
-.icon-btn{display:none;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:#0B2A4A;text-decoration:none;border:0;background:none;cursor:pointer}
+.actions{display:flex;align-items:center;gap:6px;flex:none}
+.icon-btn{display:inline-flex;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;color:#0B2A4A;text-decoration:none;border:0;background:none;cursor:pointer}
 .icon-btn:hover{background:#EEF3F9}
 .icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .ai-btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;background:linear-gradient(180deg,#FFD25E,#F5B83D);color:#0B2A4A;text-decoration:none;font-family:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:600;font-size:1rem;border-radius:999px;white-space:nowrap;box-shadow:0 8px 18px -8px rgba(214,150,20,.9);transition:transform .15s ease,filter .15s ease}
@@ -74,23 +61,24 @@ header{position:sticky;top:0;z-index:20;background:#F5F8FC;padding:calc(10px + e
 .ai-btn:active{transform:scale(.97)}
 .ai-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .ai-btn .short{display:none}
-.burger{display:inline-flex;width:44px;height:44px;border-radius:12px;align-items:center;justify-content:center;border:0;background:none;color:#0B2A4A;cursor:pointer}
-.burger:hover{background:#EEF3F9}
-.burger svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 
-.mnav{display:none;position:absolute;left:12px;right:12px;top:100%;max-width:1100px;margin:0 auto;background:#fff;border:1px solid #E6EDF5;border-radius:18px;padding:8px;box-shadow:0 18px 40px -16px rgba(11,42,74,.45);max-height:calc(100vh - 100px);overflow:auto}
-.mnav.open{display:block}
-.mnav a{display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:10px;text-decoration:none;color:#16324F;font:500 1rem 'Outfit',system-ui,sans-serif}
-.mnav a:hover{background:#EEF3F9}
-.mnav .sub{padding-left:26px;font-size:.93rem;color:#3C4F66}
-.mnav .grp{font:600 .72rem 'Outfit',system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7A8AA0;padding:10px 12px 2px}
+/* menu ke saare buttons header ke andar ek line mein */
+.menu-row{display:flex;align-items:center;gap:6px;padding:8px 10px 10px;border-top:1px solid #EEF2F7;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.menu-row::-webkit-scrollbar{display:none}
+.menu-row a{flex:none;display:inline-flex;align-items:center;gap:7px;text-decoration:none;font:500 .93rem 'Outfit',system-ui,sans-serif;color:#16324F;background:#F2F6FB;padding:9px 14px;border-radius:999px;white-space:nowrap}
+.menu-row a:hover{background:#E4ECF7}
+.menu-row a.ai{background:#F0E9FF;color:#4B1FA8}
+.menu-row a.ai:hover{background:#E6DBFF}
+.menu-row svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.new{font-size:.58rem;font-weight:700;letter-spacing:.06em;background:#7C3AED;color:#fff;padding:2px 6px;border-radius:6px}
 
-.brand:focus-visible,.ai-btn:focus-visible,.nav-links a:focus-visible,.dd>button:focus-visible,.burger:focus-visible,.icon-btn:focus-visible,.mnav a:focus-visible{outline:3px solid #1F6FB5;outline-offset:2px;border-radius:12px}
-.ai-btn:focus-visible{border-radius:999px}
+.brand:focus-visible,.ai-btn:focus-visible,.menu-row a:focus-visible,.icon-btn:focus-visible{outline:3px solid #1F6FB5;outline-offset:2px;border-radius:12px}
+.ai-btn:focus-visible,.menu-row a:focus-visible{border-radius:999px}
 
-@media (min-width:1040px){.nav-links{display:flex}.icon-btn{display:inline-flex}.burger{display:none}.mnav{display:none!important}}
+@media (min-width:900px){.menu-row{justify-content:center}}
+@media (max-width:899px){.menu-row{-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent);padding-right:28px}}
 @media (max-width:560px){.brand .tag{display:none}.ai-btn .long{display:none}.ai-btn .short{display:inline}.ai-btn{padding:0 14px}}
-@media (max-width:400px){.brand .name{font-size:1.15rem}.brand img{width:40px;height:40px}.ai-btn svg{display:none}.bar{padding-left:10px}}
+@media (max-width:400px){.brand .name{font-size:1.15rem}.brand img{width:40px;height:40px}.ai-btn svg{display:none}.icon-btn{display:none}.top-row{padding-left:10px}}
 
 /* ===== AI (header ke button se khulta hai) ===== */
 #app{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:var(--sky),var(--bg);color:var(--text);padding-top:env(safe-area-inset-top,0px)}
@@ -174,90 +162,42 @@ input[type=file]{display:none}
 
 <header>
   <div class="bar">
-    <a href="/" class="brand" aria-label="Rupeyantra – home">
-      <img src="/logo-icon.png" width="44" height="44" alt="Rupeyantra logo" fetchpriority="high" decoding="async">
-      <span class="txt">
-        <span class="name">Rupeyantra</span>
-        <span class="tag">Smart Finance Tools</span>
-      </span>
-    </a>
+    <div class="top-row">
+      <a href="/" class="brand" aria-label="Rupeyantra – home">
+        <img src="/logo-icon.png" width="44" height="44" alt="Rupeyantra logo" fetchpriority="high" decoding="async">
+        <span class="txt">
+          <span class="name">Rupeyantra</span>
+          <span class="tag">Smart Finance Tools</span>
+        </span>
+      </a>
 
-    <nav class="nav-links" aria-label="Main">
+      <div class="actions">
+        <a href="/ai" class="icon-btn js-open-ai" aria-label="Search ya AI se poochho" title="Kuch bhi poochho">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </a>
+        <a href="/ai" class="ai-btn js-open-ai" title="Rupeyantra AI kholo" aria-label="Start Calculating: AI se EMI, SIP aur paise ke sawal poochho, free">
+          <span class="long">Start Calculating</span><span class="short">Start</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <nav class="menu-row" aria-label="Main">
       <a href="/ai" class="js-open-ai">
-        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>
         Calculators
       </a>
-      <div class="dd">
-        <button type="button" aria-expanded="false" aria-haspopup="true">
-          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3L3 8l5 5M3 8h12a5 5 0 0 1 0 10h-3M16 21l5-5-5-5"/></svg>
-          Compare <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="dd-menu">
-          <a href="/compare/loan-card">Loan &amp; Card Compare</a>
-          <a href="/compare/insurance">Insurance Compare</a>
-          <a href="/compare/investment">Investment / Demat Compare</a>
-          <a href="/compare/savings-fd">Savings / FD Compare</a>
-        </div>
-      </div>
-      <a href="/market-data">
-        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
-        Market Data
-      </a>
-      <a href="/ai" class="js-open-ai">
-        <svg class="ic v" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+      <a href="/ai" class="ai js-open-ai">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
         AI Assistant <span class="new">NEW</span>
       </a>
-      <div class="dd">
-        <button type="button" aria-expanded="false" aria-haspopup="true">Guides <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="dd-menu">
-          <a href="/guides/loan">Loan Guide</a>
-          <a href="/guides/investment">Investment Guide</a>
-          <a href="/guides/budget">Budget &amp; Bachat Guide</a>
-        </div>
-      </div>
-      <div class="dd">
-        <button type="button" aria-expanded="false" aria-haspopup="true">More <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="dd-menu">
-          <a href="/credit-score">Credit Score</a>
-          <a href="/glossary">Glossary</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-        </div>
-      </div>
+      <a href="/compare">Compare</a>
+      <a href="/market-data">Market Data</a>
+      <a href="/guides">Guides</a>
+      <a href="/credit-score">Credit Score</a>
+      <a href="/glossary">Glossary</a>
+      <a href="/about">About</a>
     </nav>
-
-    <div class="actions">
-      <a href="/ai" class="icon-btn js-open-ai" aria-label="Search ya AI se poochho" title="Kuch bhi poochho">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      </a>
-      <a href="/ai" class="ai-btn js-open-ai" title="Rupeyantra AI kholo" aria-label="Start Calculating: AI se EMI, SIP aur paise ke sawal poochho, free">
-        <span class="long">Start Calculating</span><span class="short">Start</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-      <button type="button" class="burger" id="burger" aria-label="Menu kholo" aria-expanded="false" aria-controls="mnav">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <div class="mnav" id="mnav">
-    <a href="/ai" class="js-open-ai">Calculators</a>
-    <div class="grp">Compare</div>
-    <a class="sub" href="/compare/loan-card">Loan &amp; Card Compare</a>
-    <a class="sub" href="/compare/insurance">Insurance Compare</a>
-    <a class="sub" href="/compare/investment">Investment / Demat Compare</a>
-    <a class="sub" href="/compare/savings-fd">Savings / FD Compare</a>
-    <a href="/market-data">Market Data</a>
-    <a href="/ai" class="js-open-ai">AI Assistant <span class="new">NEW</span></a>
-    <div class="grp">Guides</div>
-    <a class="sub" href="/guides/loan">Loan Guide</a>
-    <a class="sub" href="/guides/investment">Investment Guide</a>
-    <a class="sub" href="/guides/budget">Budget &amp; Bachat Guide</a>
-    <div class="grp">More</div>
-    <a class="sub" href="/credit-score">Credit Score</a>
-    <a class="sub" href="/glossary">Glossary</a>
-    <a class="sub" href="/about">About</a>
-    <a class="sub" href="/contact">Contact</a>
   </div>
 </header>
 
@@ -554,30 +494,6 @@ $('back').onclick=()=>{
   if(window.history.state&&window.history.state.ai){window.history.back()}
   else{closeAI();try{window.history.replaceState(null,'','/')}catch(e){}}
 };
-/* dropdown + mobile menu */
-(function(){
-  const dds=Array.from(document.querySelectorAll('.dd'));
-  const burger=$('burger'),panel=$('mnav');
-  function closeDD(){dds.forEach(d=>{d.classList.remove('open');d.firstElementChild.setAttribute('aria-expanded','false')})}
-  function closeNav(){panel.classList.remove('open');burger.setAttribute('aria-expanded','false')}
-  dds.forEach(d=>{
-    const b=d.firstElementChild;
-    b.addEventListener('click',e=>{
-      e.stopPropagation();
-      const was=d.classList.contains('open');
-      closeDD();
-      if(!was){d.classList.add('open');b.setAttribute('aria-expanded','true')}
-    });
-  });
-  burger.addEventListener('click',e=>{e.stopPropagation();const o=panel.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
-  panel.addEventListener('click',e=>{if(e.target.closest('a'))closeNav()});
-  document.addEventListener('click',e=>{
-    if(!e.target.closest('.dd'))closeDD();
-    if(!e.target.closest('#mnav')&&!e.target.closest('#burger'))closeNav();
-  });
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDD();closeNav()}});
-})();
-
 window.addEventListener('popstate',()=>{if(location.pathname==='/ai')openAI(false);else closeAI()});
 if(location.pathname==='/ai')openAI(false);
 </script>
