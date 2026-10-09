@@ -1,302 +1,278 @@
 
-const SYSTEM = `Tum Rupeyantra ke AI assistant ho. Rupeyantra ek Indian finance/paisa website hai. Tumhara kaam hai Bharat ke users ko paise ke sawalon mein sahi, saaf aur bharose layak madad dena.
-
-BHASHA AUR STYLE
-- Hinglish (Roman Hindi) mein jawab do, jab tak user kisi aur bhasha mein na likhe.
-- Dosti bhare, seedhe aur chhote jawab do. Phone par padhne layak jawab do.
-- Markdown mat use karo. Sirf saada text, line breaks aur 1. 2. jaisi list.
-- Rupaye ₹ mein aur Indian number format mein likho: 1,50,000 ya 1.5 lakh, 2 crore.
-
-CALCULATOR RULES
-- EMI, SIP, lumpsum/FD maturity, CAGR aur simple interest ke liye HAMESHA calculator tool use karo.
-- In calculations ko apne aap dimaag se mat karo.
-- Hisaab se pehle zaroori inputs check karo. Koi zaroori input missing ho to user se poochho.
-- Tool error de to number khud se mat banao. User ko saaf batao ki input ya calculation mein problem hai.
-- Tool ka result jaisa mila hai, usi ke mutabik batao.
-- Pehle ek line mein assumptions batao, phir result do.
-- SIP/mutual fund returns sirf andaze hain, guaranteed nahi.
-
-SAHI HONE KE RULES
-- Byaaj dar, tax slab, RBI/SEBI ke niyam aur FD/sarkari scheme ke rates badal sakte hain. Pakka pata na ho to number mat banao.
-- Jo nahi pata, saaf bolo ki pakka nahi pata.
-- Photo/file mein jo saaf dikh raha hai sirf wahi batao.
-- OTP, PIN, password, card number ya CVV kabhi mat maango.
-
-FINANCIAL LIMITS
-- Tum licensed financial advisor nahi ho.
-- Kisi specific share, fund ya trade ko kharidne/bechne ki confident salah mat do.
-- Jaankari, comparison aur risk samjhao.
-- Bade nivesh, loan ya tax decisions ke liye SEBI-registered advisor ya CA se salah lene ko kaho.
-- Finance ke alawa sawalon ka bhi chhota aur madadgaar jawab do.`;
+const SYSTEM = `Tum Rupeyantra ke AI assistant ho, Indian finance website ke liye.
+Default Hinglish (Roman Hindi) mein chhote, seedhe jawab do. User doosri bhasha use kare to usi mein jawab do. Markdown/table mat use karo. Rupaye ₹ aur Indian number format use karo.
+EMI, SIP, FD/lumpsum, CAGR, simple interest, GST aur inflation ke liye calculator tool HAMESHA use karo. Zaroori input missing ho to poochho. Tool error ho to result invent mat karo. SIP/market returns guarantee nahi hain.
+Badalte interest rates, tax rules, RBI/SEBI rules ya government scheme details bina verified source ke mat banao. Tum licensed financial advisor nahi ho; specific share/fund ko buy/sell karne ki confident salah mat do. OTP, PIN, password, card number ya CVV kabhi mat maango.`;
 
 function sys() {
-  const today = new Date().toLocaleDateString('en-IN', {
-    timeZone: 'Asia/Kolkata',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-  return SYSTEM + '\n\nAaj ki tareekh (India): ' + today + '.';
+  return SYSTEM + '\\n\\nAaj ki tareekh (India): ' +
+    new Date().toLocaleDateString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }) + '.';
 }
 
 const TIMEOUT = 20000;
-const GEMINI_TIMEOUT = 15000;
+const GEMINI_TIMEOUT = 18000;
+const MAX_MESSAGES = 20;
+const MAX_CONTENT_CHARS = 12000;
+const MAX_ATTACHMENTS = 3;
+const MAX_MEDIA_CHARS = 3000000;
+const MAX_REQUEST_CHARS = 5000000;
+const MAX_OUTPUT_TOKENS = 1200;
 const MEDIA_TYPES = [
   'image/jpeg',
   'image/png',
   'image/webp',
-  'application/pdf',
+  'application/pdf'
 ];
-const MAX_MEDIA_CHARS = 4000000;
 
-/* ---------------- Calculator tools ---------------- */
-
-const inr = n =>
-  '₹' + Math.round(n).toLocaleString('en-IN');
-
-const r2 = n =>
-  Math.round(n * 100) / 100;
+const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const r2 = n => Math.round(n * 100) / 100;
 
 function num(v, name) {
-  const x = Number(v);
-
-  if (
-    v === undefined ||
-    v === null ||
-    v === '' ||
-    !Number.isFinite(x)
-  ) {
-    throw new Error(name + ' missing ya galat hai');
+  if (v === undefined || v === null || v === '') {
+    throw new Error(name + ' missing hai');
   }
-
+  const x = Number(v);
+  if (!Number.isFinite(x)) throw new Error(name + ' galat hai');
   return x;
 }
 
 const DEFS = [
   {
     name: 'calc_emi',
-    description:
-      'Loan ki monthly EMI, total interest aur total payment calculate karta hai.',
+    description: 'Loan ki EMI, total interest aur total payment calculate karta hai.',
     params: {
-      principal: 'Loan ki rashi rupaye mein',
-      annual_rate: 'Saalana byaaj dar percent mein',
-      years: 'Loan ki avadhi saal mein. Zaroori hai.',
-      months: 'Loan ki avadhi mahine mein. Diya ho to years se pehle use hoga.',
+      principal: 'Loan amount rupaye mein',
+      annual_rate: 'Annual interest rate percent mein',
+      years: 'Loan term years mein; months na diya ho to zaroori',
+      months: 'Loan term months mein; years ke badle use ho sakta hai'
     },
-    required: ['principal', 'annual_rate', 'years'],
-
+    required: ['principal', 'annual_rate'],
     run(a) {
       const P = num(a.principal, 'principal');
       const rate = num(a.annual_rate, 'annual_rate');
+      const n = a.months !== undefined && a.months !== null && a.months !== ''
+        ? num(a.months, 'months')
+        : num(a.years, 'years') * 12;
 
-      const n =
-        a.months !== undefined &&
-        a.months !== null &&
-        a.months !== ''
-          ? num(a.months, 'months')
-          : num(a.years, 'years') * 12;
-
-      if (
-        P <= 0 ||
-        n <= 0 ||
-        rate < 0 ||
-        rate > 100 ||
-        !Number.isFinite(n)
-      ) {
+      if (P <= 0 || n <= 0 || n > 1200 || rate < 0 || rate > 100) {
         throw new Error('Rashi, dar ya avadhi galat hai');
       }
 
       const r = rate / 1200;
-
-      const emi =
-        r === 0
-          ? P / n
-          : (P * r * Math.pow(1 + r, n)) /
-            (Math.pow(1 + r, n) - 1);
+      const emi = r === 0
+        ? P / n
+        : P * r * Math.pow(1 + r, n) /
+          (Math.pow(1 + r, n) - 1);
 
       return {
         monthly_emi: inr(emi),
         monthly_emi_exact: r2(emi),
         months: n,
         total_payment: inr(emi * n),
-        total_interest: inr(emi * n - P),
+        total_interest: inr(emi * n - P)
       };
-    },
+    }
   },
-
   {
     name: 'calc_sip',
-    description:
-      'Monthly SIP ka estimated future value, total invested amount aur estimated gain calculate karta hai. Returns guaranteed nahi hain.',
+    description: 'Monthly SIP ka estimated future value, invested amount aur gain. Returns guaranteed nahi.',
     params: {
-      monthly_amount: 'Har mahine ki SIP rashi rupaye mein',
-      annual_return: 'Maana gaya saalana return percent mein',
-      years: 'Kitne saal tak SIP chalegi',
+      monthly_amount: 'Monthly SIP amount',
+      annual_return: 'Assumed annual return percent',
+      years: 'SIP duration years mein'
     },
     required: ['monthly_amount', 'annual_return', 'years'],
-
     run(a) {
       const P = num(a.monthly_amount, 'monthly_amount');
       const rate = num(a.annual_return, 'annual_return');
       const years = num(a.years, 'years');
 
-      if (
-        P <= 0 ||
-        years <= 0 ||
-        rate < -50 ||
-        rate > 100
-      ) {
-        throw new Error('Rashi, return ya saal galat hai');
+      if (P <= 0 || years <= 0 || years > 100 ||
+          rate < -50 || rate > 100) {
+        throw new Error('Rashi, return ya avadhi galat hai');
       }
 
       const n = years * 12;
       const r = rate / 1200;
-
-      const fv =
-        r === 0
-          ? P * n
-          : P * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+      const fv = r === 0
+        ? P * n
+        : P * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
 
       return {
         total_invested: inr(P * n),
         future_value: inr(fv),
         estimated_gain: inr(fv - P * n),
-        disclaimer: 'Yeh estimate hai, guaranteed return nahi.',
+        note: 'Estimate hai; market returns guaranteed nahi.'
       };
-    },
+    }
   },
-
   {
     name: 'calc_lumpsum',
-    description:
-      'Ek baar ke nivesh ya FD ka compound-interest maturity amount calculate karta hai.',
+    description: 'Lumpsum/FD compound-interest maturity calculate karta hai.',
     params: {
-      principal: 'Nivesh ki rashi rupaye mein',
-      annual_rate: 'Saalana dar percent mein',
-      years: 'Kitne saal',
-      compounds_per_year:
-        'Saal mein kitni baar interest compound hota hai. Default 4, yani quarterly.',
+      principal: 'Investment amount',
+      annual_rate: 'Annual interest rate percent',
+      years: 'Duration years mein',
+      compounds_per_year: 'Compounding per year; default 4 (quarterly)'
     },
     required: ['principal', 'annual_rate', 'years'],
-
     run(a) {
       const P = num(a.principal, 'principal');
       const rate = num(a.annual_rate, 'annual_rate');
       const t = num(a.years, 'years');
+      const m = a.compounds_per_year == null || a.compounds_per_year === ''
+        ? 4
+        : num(a.compounds_per_year, 'compounds_per_year');
 
-      const m =
-        a.compounds_per_year !== undefined &&
-        a.compounds_per_year !== null &&
-        a.compounds_per_year !== ''
-          ? num(a.compounds_per_year, 'compounds_per_year')
-          : 4;
-
-      if (
-        P <= 0 ||
-        t <= 0 ||
-        m <= 0 ||
-        !Number.isInteger(m) ||
-        rate < -50 ||
-        rate > 100
-      ) {
-        throw new Error('Rashi, dar, avadhi ya compounding frequency galat hai');
+      if (P <= 0 || t <= 0 || t > 100 || m <= 0 || m > 365 ||
+          !Number.isInteger(m) || rate < -50 || rate > 100) {
+        throw new Error('Rashi, dar, duration ya compounding galat hai');
       }
 
-      const mat = P * Math.pow(1 + rate / 100 / m, m * t);
-
+      const maturity = P * Math.pow(1 + rate / 100 / m, m * t);
       return {
-        maturity_amount: inr(mat),
-        interest_earned: inr(mat - P),
-        compounding_per_year: m,
+        maturity_amount: inr(maturity),
+        interest_earned: inr(maturity - P),
+        compounds_per_year: m
       };
-    },
+    }
   },
-
   {
     name: 'calc_cagr',
-    description:
-      'Investment ki starting aur ending value se annual CAGR calculate karta hai.',
+    description: 'Starting aur ending value se annual CAGR calculate karta hai.',
     params: {
-      start_value: 'Shuruaati value rupaye mein',
-      end_value: 'Antim value rupaye mein',
-      years: 'Kitne saal mein',
+      start_value: 'Starting value',
+      end_value: 'Ending value',
+      years: 'Duration years mein'
     },
     required: ['start_value', 'end_value', 'years'],
-
     run(a) {
       const s = num(a.start_value, 'start_value');
       const e = num(a.end_value, 'end_value');
       const y = num(a.years, 'years');
 
-      if (s <= 0 || e <= 0 || y <= 0) {
-        throw new Error('Value ya saal galat hai');
+      if (s <= 0 || e <= 0 || y <= 0 || y > 100) {
+        throw new Error('Value ya duration galat hai');
       }
 
       return {
-        cagr_percent: r2((Math.pow(e / s, 1 / y) - 1) * 100),
+        cagr_percent: r2((Math.pow(e / s, 1 / y) - 1) * 100)
       };
-    },
+    }
   },
-
   {
     name: 'calc_simple_interest',
-    description:
-      'Principal, annual interest rate aur years se simple interest calculate karta hai.',
+    description: 'Simple interest aur total amount calculate karta hai.',
     params: {
-      principal: 'Rashi rupaye mein',
-      annual_rate: 'Saalana dar percent mein',
-      years: 'Kitne saal',
+      principal: 'Principal amount',
+      annual_rate: 'Annual interest rate percent',
+      years: 'Duration years mein'
     },
     required: ['principal', 'annual_rate', 'years'],
-
     run(a) {
       const P = num(a.principal, 'principal');
       const rate = num(a.annual_rate, 'annual_rate');
       const t = num(a.years, 'years');
 
-      if (
-        P <= 0 ||
-        t <= 0 ||
-        rate < 0 ||
-        rate > 100
-      ) {
-        throw new Error('Rashi, dar ya saal galat hai');
+      if (P <= 0 || t <= 0 || t > 100 || rate < 0 || rate > 100) {
+        throw new Error('Rashi, dar ya duration galat hai');
       }
 
-      const interest = (P * rate * t) / 100;
-
+      const interest = P * rate * t / 100;
       return {
         interest: inr(interest),
-        total_amount: inr(P + interest),
+        total_amount: inr(P + interest)
       };
-    },
+    }
   },
+  {
+    name: 'calc_gst',
+    description: 'GST amount aur total bill calculate karta hai. inclusive=1 jab GST amount mein included ho, otherwise 0.',
+    params: {
+      amount: 'Amount rupaye mein',
+      gst_rate: 'GST rate percent mein',
+      inclusive: '1 if GST included, otherwise 0'
+    },
+    required: ['amount', 'gst_rate', 'inclusive'],
+    run(a) {
+      const amount = num(a.amount, 'amount');
+      const rate = num(a.gst_rate, 'gst_rate');
+      const inc = num(a.inclusive, 'inclusive');
+
+      if (amount < 0 || rate < 0 || rate > 100 ||
+          ![0, 1].includes(inc)) {
+        throw new Error('Amount, GST rate ya inclusive value galat hai');
+      }
+
+      if (inc === 1) {
+        const base = amount / (1 + rate / 100);
+        return {
+          base_amount: inr(base),
+          gst_amount: inr(amount - base),
+          total_amount: inr(amount),
+          mode: 'GST included'
+        };
+      }
+
+      const gst = amount * rate / 100;
+      return {
+        base_amount: inr(amount),
+        gst_amount: inr(gst),
+        total_amount: inr(amount + gst),
+        mode: 'GST extra'
+      };
+    }
+  },
+  {
+    name: 'calc_inflation',
+    description: 'Assumed inflation se future cost estimate karta hai; future inflation guaranteed nahi.',
+    params: {
+      current_amount: 'Aaj ki amount rupaye mein',
+      annual_inflation: 'Assumed annual inflation percent',
+      years: 'Duration years mein'
+    },
+    required: ['current_amount', 'annual_inflation', 'years'],
+    run(a) {
+      const amount = num(a.current_amount, 'current_amount');
+      const rate = num(a.annual_inflation, 'annual_inflation');
+      const years = num(a.years, 'years');
+
+      if (amount <= 0 || rate < -20 || rate > 100 ||
+          years <= 0 || years > 100) {
+        throw new Error('Amount, inflation ya duration galat hai');
+      }
+
+      const future = amount * Math.pow(1 + rate / 100, years);
+      return {
+        future_cost_estimate: inr(future),
+        extra_cost_estimate: inr(future - amount),
+        note: 'Assumption-based estimate hai.'
+      };
+    }
+  }
 ];
 
-function schema(d) {
+function schema(d, gemini = false) {
   const properties = {};
-
-  for (const [key, description] of Object.entries(d.params)) {
-    properties[key] = {
-      type: 'number',
-      description,
+  for (const [k, description] of Object.entries(d.params)) {
+    properties[k] = {
+      type: gemini ? 'NUMBER' : 'number',
+      description
     };
   }
-
-  return {
-    type: 'object',
-    properties,
-    required: d.required,
-  };
+  return gemini
+    ? { type: 'OBJECT', properties, required: d.required }
+    : { type: 'object', properties, required: d.required };
 }
 
 function runTool(name, args) {
   const d = DEFS.find(x => x.name === name);
-
-  if (!d) {
-    return { error: 'Unknown calculator tool: ' + name };
-  }
-
+  if (!d) return { error: 'Unknown tool: ' + name };
   try {
     return d.run(args || {});
   } catch (e) {
@@ -309,112 +285,79 @@ const OPENAI_TOOLS = DEFS.map(d => ({
   function: {
     name: d.name,
     description: d.description,
-    parameters: schema(d),
-  },
+    parameters: schema(d)
+  }
 }));
 
-const GEMINI_TOOLS = [
-  {
-    functionDeclarations: DEFS.map(d => ({
-      name: d.name,
-      description: d.description,
-      parameters: schema(d),
-    })),
-  },
-];
-
-/* ---------------- Shared helpers ---------------- */
+const GEMINI_TOOLS = [{
+  functionDeclarations: DEFS.map(d => ({
+    name: d.name,
+    description: d.description,
+    parameters: schema(d, true)
+  }))
+}];
 
 async function fail(name, response) {
   let body = '';
-
   try {
     body = (await response.text()).slice(0, 300);
   } catch (_) {}
-
-  throw new Error(`${name} ${response.status} ${body}`);
+  throw new Error(`${name} HTTP ${response.status}: ${body}`);
 }
 
-const plain = messages =>
-  messages.map(m => ({
-    role: m.role,
-    content: m.content,
-  }));
-
-/* ---------------- OpenAI-compatible providers ---------------- */
-
-async function openaiChat({
-  name,
-  url,
-  key,
-  model,
-  extra,
-  messages,
-}) {
-  if (!key) {
-    throw new Error(name + ' API key missing');
-  }
+/* Groq / OpenRouter */
+async function openaiChat({ name, url, key, model, messages }) {
+  if (!key) throw new Error(name + ' API key missing');
 
   const convo = [
     { role: 'system', content: sys() },
-    ...plain(messages),
+    ...messages.map(m => ({ role: m.role, content: m.content }))
   ];
 
   for (let i = 0; i < 5; i++) {
-    const body = {
-      model,
-      messages: convo,
-      ...extra,
-      tools: OPENAI_TOOLS,
-      tool_choice: 'auto',
-    };
-
-    const response = await fetch(url, {
+    const r = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
+        Authorization: `Bearer ${key}`
       },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(TIMEOUT),
+      body: JSON.stringify({
+        model,
+        messages: convo,
+        max_tokens: MAX_OUTPUT_TOKENS,
+        temperature: 0.2,
+        tools: OPENAI_TOOLS,
+        tool_choice: 'auto'
+      }),
+      signal: AbortSignal.timeout(TIMEOUT)
     });
 
-    if (!response.ok) {
-      await fail(name, response);
-    }
+    if (!r.ok) await fail(name, r);
 
-    const data = await response.json();
-    const msg = data.choices?.[0]?.message;
-
-    if (!msg) {
-      throw new Error(name + ' se khali jawab mila');
-    }
+    const msg = (await r.json()).choices?.[0]?.message;
+    if (!msg) throw new Error(name + ' se khali jawab mila');
 
     if (msg.tool_calls?.length) {
       convo.push({
         role: 'assistant',
         content: msg.content || '',
-        tool_calls: msg.tool_calls,
+        tool_calls: msg.tool_calls
       });
 
       for (const tc of msg.tool_calls) {
-        let args;
-
+        let args = {};
         try {
-          args = JSON.parse(tc.function.arguments || '{}');
-        } catch (_) {
-          args = {};
-        }
-
-        const result = runTool(tc.function.name, args);
+          args = JSON.parse(tc.function?.arguments || '{}');
+        } catch (_) {}
 
         convo.push({
           role: 'tool',
           tool_call_id: tc.id,
-          content: JSON.stringify(result),
+          content: JSON.stringify(
+            runTool(tc.function?.name, args)
+          )
         });
       }
-
       continue;
     }
 
@@ -422,49 +365,33 @@ async function openaiChat({
       throw new Error(name + ' se khali jawab mila');
     }
 
-    return msg.content;
+    return msg.content.trim();
   }
 
-  throw new Error(name + ' ka tool-call limit poora ho gaya');
+  throw new Error(name + ' tool-call limit poora ho gaya');
 }
 
-const askGroq = messages =>
-  openaiChat({
-    name: 'Groq',
-    url: 'https://api.groq.com/openai/v1/chat/completions',
-    key: (process.env.GROQ_API_KEY || '').trim(),
-    model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
-    extra: {
-      max_tokens: 2500,
-      temperature: 0.3,
-    },
-    messages,
-  });
+const askGroq = messages => openaiChat({
+  name: 'Groq',
+  url: 'https://api.groq.com/openai/v1/chat/completions',
+  key: (process.env.GROQ_API_KEY || '').trim(),
+  model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
+  messages
+});
 
-const askOpenRouter = messages =>
-  openaiChat({
-    name: 'OpenRouter',
-    url: 'https://openrouter.ai/api/v1/chat/completions',
-    key: (process.env.OPENROUTER_API_KEY || '').trim(),
-    model:
-      process.env.OPENROUTER_MODEL ||
-      'meta-llama/llama-3.3-70b-instruct',
-    extra: {
-      max_tokens: 1500,
-      temperature: 0.3,
-    },
-    messages,
-  });
+const askOpenRouter = messages => openaiChat({
+  name: 'OpenRouter',
+  url: 'https://openrouter.ai/api/v1/chat/completions',
+  key: (process.env.OPENROUTER_API_KEY || '').trim(),
+  model: process.env.OPENROUTER_MODEL ||
+    'meta-llama/llama-3.3-70b-instruct',
+  messages
+});
 
-/* ---------------- Gemini ---------------- */
-
-async function geminiCall(model, messages, think) {
-  const label = 'Gemini(' + model + ')';
+/* Gemini */
+async function geminiCall(model, messages) {
   const key = (process.env.GEMINI_API_KEY || '').trim();
-
-  if (!key) {
-    throw new Error('GEMINI_API_KEY missing');
-  }
+  if (!key) throw new Error('GEMINI_API_KEY missing');
 
   const contents = messages.map(m => ({
     role: m.role === 'assistant' ? 'model' : 'user',
@@ -473,59 +400,44 @@ async function geminiCall(model, messages, think) {
       ...(m.attachments || []).map(a => ({
         inlineData: {
           mimeType: a.mime,
-          data: a.data,
-        },
-      })),
-    ],
+          data: a.data
+        }
+      }))
+    ]
   }));
 
   for (let i = 0; i < 5; i++) {
-    const generationConfig = {
-      maxOutputTokens: 2048,
-    };
-
-    if (think) {
-      generationConfig.thinkingConfig = {
-        thinkingLevel: 'low',
-      };
-    }
-
-    const body = {
-      systemInstruction: {
-        parts: [{ text: sys() }],
-      },
-      contents,
-      generationConfig,
-      tools: GEMINI_TOOLS,
-    };
-
-    const response = await fetch(
+    const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-goog-api-key': key,
+          'x-goog-api-key': key
         },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(GEMINI_TIMEOUT),
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: sys() }]
+          },
+          contents,
+          generationConfig: {
+            maxOutputTokens: MAX_OUTPUT_TOKENS,
+            temperature: 0.2
+          },
+          tools: GEMINI_TOOLS
+        }),
+        signal: AbortSignal.timeout(GEMINI_TIMEOUT)
       }
     );
 
-    if (!response.ok) {
-      await fail(label, response);
-    }
+    if (!r.ok) await fail('Gemini(' + model + ')', r);
 
-    const data = await response.json();
+    const data = await r.json();
     const parts = data.candidates?.[0]?.content?.parts || [];
     const calls = parts.filter(p => p.functionCall);
 
     if (calls.length) {
-      // Original model parts ko preserve karna zaroori hai.
-      contents.push({
-        role: 'model',
-        parts,
-      });
+      contents.push({ role: 'model', parts });
 
       contents.push({
         role: 'user',
@@ -536,12 +448,11 @@ async function geminiCall(model, messages, think) {
               result: runTool(
                 p.functionCall.name,
                 p.functionCall.args || {}
-              ),
-            },
-          },
-        })),
+              )
+            }
+          }
+        }))
       });
-
       continue;
     }
 
@@ -550,41 +461,24 @@ async function geminiCall(model, messages, think) {
       .join('')
       .trim();
 
-    if (!answer) {
-      throw new Error(label + ' se khali jawab mila');
-    }
-
+    if (!answer) throw new Error('Gemini se khali jawab mila');
     return answer;
   }
 
-  throw new Error(label + ' ka tool-call limit poora ho gaya');
+  throw new Error('Gemini tool-call limit poora ho gaya');
 }
 
 async function askGemini(messages) {
-  const attempts = [
-    {
-      model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
-      think: true,
-    },
-    {
-      model: 'gemini-3.5-flash-lite',
-      think: false,
-    },
-    {
-      model: 'gemini-3.7-flash',
-      think: false,
-    },
-  ];
+  const models = [...new Set([
+    process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    'gemini-2.5-flash-lite'
+  ])];
 
   const errors = [];
 
-  for (const attempt of attempts) {
+  for (const model of models) {
     try {
-      return await geminiCall(
-        attempt.model,
-        messages,
-        attempt.think
-      );
+      return await geminiCall(model, messages);
     } catch (e) {
       console.error('Gemini attempt failed:', e.message);
       errors.push(e.message);
@@ -594,48 +488,24 @@ async function askGemini(messages) {
   throw new Error(errors.join(' | '));
 }
 
-/* ---------------- Providers ---------------- */
-
 const ALL = [
-  {
-    name: 'groq',
-    env: 'GROQ_API_KEY',
-    run: askGroq,
-  },
-  {
-    name: 'gemini',
-    env: 'GEMINI_API_KEY',
-    run: askGemini,
-  },
-  {
-    name: 'openrouter',
-    env: 'OPENROUTER_API_KEY',
-    run: askOpenRouter,
-  },
+  { name: 'groq', env: 'GROQ_API_KEY', run: askGroq },
+  { name: 'gemini', env: 'GEMINI_API_KEY', run: askGemini },
+  { name: 'openrouter', env: 'OPENROUTER_API_KEY', run: askOpenRouter }
 ];
 
-/* ---------------- Basic rate limiting ---------------- */
-
-// Ye per-server-instance rate limit hai.
-// Multiple instances par shared limit ke liye Redis/Upstash ya
-// Vercel Firewall ka istemal karo.
-
+/* Basic per-instance rate limit.
+   Production scale par Upstash/Redis ya firewall use karo. */
 const hits = new Map();
 const PER_MIN = 8;
 const PER_HOUR = 60;
 
 function limited(ip) {
   const now = Date.now();
+  const arr = (hits.get(ip) || []).filter(t => now - t < 3600000);
+  const lastMinute = arr.filter(t => now - t < 60000).length;
 
-  const arr = (hits.get(ip) || []).filter(
-    t => now - t < 3600000
-  );
-
-  const lastMin = arr.filter(
-    t => now - t < 60000
-  ).length;
-
-  if (lastMin >= PER_MIN || arr.length >= PER_HOUR) {
+  if (lastMinute >= PER_MIN || arr.length >= PER_HOUR) {
     hits.set(ip, arr);
     return true;
   }
@@ -645,10 +515,7 @@ function limited(ip) {
 
   if (hits.size > 5000) {
     for (const [key, times] of hits) {
-      if (
-        !times.length ||
-        now - times[times.length - 1] > 3600000
-      ) {
+      if (!times.length || now - times[times.length - 1] > 3600000) {
         hits.delete(key);
       }
     }
@@ -657,27 +524,38 @@ function limited(ip) {
   return false;
 }
 
-/* ---------------- Handler ---------------- */
-
 async function handler(req, res) {
   const keys = {};
 
-  for (const provider of ALL) {
-    keys[provider.name] = Boolean(
-      (process.env[provider.env] || '').trim()
-    );
+  for (const p of ALL) {
+    keys[p.name] = Boolean((process.env[p.env] || '').trim());
   }
 
-  // Sirf key status batata hai, key value kabhi nahi.
   if (req.method === 'GET') {
     return res.status(200).json({ keys });
   }
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'GET, POST');
-
     return res.status(405).json({
-      message: 'Sirf GET aur POST requests allowed hain.',
+      message: 'Sirf GET aur POST allowed hain.'
+    });
+  }
+
+  let requestBytes;
+
+  try {
+    requestBytes = Buffer.byteLength(
+      JSON.stringify(req.body || {}),
+      'utf8'
+    );
+  } catch (_) {
+    requestBytes = MAX_REQUEST_CHARS + 1;
+  }
+
+  if (requestBytes > MAX_REQUEST_CHARS) {
+    return res.status(413).json({
+      message: 'Request bahut badi hai. Chhota message ya file bhejo.'
     });
   }
 
@@ -691,41 +569,40 @@ async function handler(req, res) {
 
   if (limited(ip)) {
     return res.status(429).json({
-      message:
-        'Bahut zyada sawal aa gaye hain. Thodi der ruk kar dobara try karo.',
+      message: 'Bahut zyada sawal aa gaye hain. Ek minute ruk kar try karo.'
     });
   }
 
   const incoming = Array.isArray(req.body?.messages)
-    ? req.body.messages.slice(-20)
+    ? req.body.messages.slice(-MAX_MESSAGES)
     : [];
 
   const clean = incoming
-    .filter(
-      m =>
-        m &&
-        (m.role === 'user' || m.role === 'assistant') &&
-        typeof m.content === 'string'
+    .filter(m =>
+      m &&
+      ['user', 'assistant'].includes(m.role) &&
+      typeof m.content === 'string'
     )
     .map(m => {
       const out = {
         role: m.role,
-        content: m.content.slice(0, 20000),
+        content: m.content.slice(0, MAX_CONTENT_CHARS)
       };
 
       if (m.role === 'user' && Array.isArray(m.attachments)) {
         const attachments = m.attachments
-          .filter(
-            a =>
-              a &&
-              MEDIA_TYPES.includes(a.mime) &&
-              typeof a.data === 'string' &&
-              a.data.length > 0
+          .filter(a =>
+            a &&
+            MEDIA_TYPES.includes(a.mime) &&
+            typeof a.data === 'string' &&
+            a.data.length > 0 &&
+            a.data.length <= MAX_MEDIA_CHARS &&
+            /^[A-Za-z0-9+/]+={0,2}$/.test(a.data)
           )
-          .slice(0, 3)
+          .slice(0, MAX_ATTACHMENTS)
           .map(a => ({
             mime: a.mime,
-            data: a.data,
+            data: a.data
           }));
 
         if (attachments.length) {
@@ -736,20 +613,16 @@ async function handler(req, res) {
       return out;
     });
 
-  if (
-    !clean.length ||
-    clean[clean.length - 1].role !== 'user'
-  ) {
+  if (!clean.length || clean[clean.length - 1].role !== 'user') {
     return res.status(400).json({
-      message: 'Request galat hai. Dobara try karo.',
+      message: 'Request galat hai. Naya sawal bhejo.'
     });
   }
 
   const mediaSize = clean.reduce(
-    (total, message) =>
-      total +
-      (message.attachments || []).reduce(
-        (sum, attachment) => sum + attachment.data.length,
+    (sum, m) =>
+      sum + (m.attachments || []).reduce(
+        (s, a) => s + a.data.length,
         0
       ),
     0
@@ -757,57 +630,46 @@ async function handler(req, res) {
 
   if (mediaSize > MAX_MEDIA_CHARS) {
     return res.status(413).json({
-      message:
-        'Photo ya PDF bahut badi hai. Chhoti file bhej kar try karo.',
+      message: 'Photo/PDF bahut badi hai. Chhoti file bhejo.'
     });
   }
 
   const needsGemini = mediaSize > 0;
 
-  // Photo/PDF ke liye Gemini required hai.
-  // Text-only sawalon mein available providers fallback kar sakte hain.
-  const providers = ALL.filter(
-    provider =>
-      keys[provider.name] &&
-      (!needsGemini || provider.name === 'gemini')
+  const providers = ALL.filter(p =>
+    keys[p.name] &&
+    (!needsGemini || p.name === 'gemini')
   );
 
   if (!providers.length) {
     return res.status(500).json({
       message: needsGemini
         ? 'Photo/PDF ke liye GEMINI_API_KEY missing hai. Vercel Environment Variables mein add karke redeploy karo.'
-        : 'Koi API key nahi mili. Vercel > Settings > Environment Variables mein GROQ_API_KEY, GEMINI_API_KEY ya OPENROUTER_API_KEY add karo, phir redeploy karo.',
-      keys,
+        : 'Koi AI API key nahi mili. Vercel Environment Variables mein kam se kam ek provider ki key add karo.',
+      keys
     });
   }
 
   const errors = [];
 
-  for (const provider of providers) {
+  for (const p of providers) {
     try {
-      const reply = await provider.run(clean);
+      const reply = await p.run(clean);
 
       return res.status(200).json({
         reply,
-        used: provider.name,
+        used: p.name
       });
     } catch (e) {
-      console.error(
-        `${provider.name} failed:`,
-        e.message
-      );
-
-      errors.push(
-        `${provider.name}: ${e.message}`
-      );
+      console.error(p.name + ' failed:', e.message);
+      errors.push(p.name + ': ' + e.message);
     }
   }
 
-  return res.status(500).json({
-    message:
-      'Saare AI providers fail ho gaye. API keys, model names aur provider limits check karo.',
+  return res.status(502).json({
+    message: 'Saare AI providers fail ho gaye. API keys, model access aur provider limits check karo.',
     details: errors,
-    keys,
+    keys
   });
 }
 
