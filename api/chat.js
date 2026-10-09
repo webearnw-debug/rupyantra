@@ -1,11 +1,11 @@
-
 const SYSTEM = `Tum Rupeyantra ke AI assistant ho, Indian finance website ke liye.
 Default Hinglish (Roman Hindi) mein chhote, seedhe jawab do. User doosri bhasha use kare to usi mein jawab do. Markdown/table mat use karo. Rupaye ₹ aur Indian number format use karo.
 EMI, SIP, FD/lumpsum, CAGR, simple interest, GST aur inflation ke liye calculator tool HAMESHA use karo. Zaroori input missing ho to poochho. Tool error ho to result invent mat karo. SIP/market returns guarantee nahi hain.
+Photo ya PDF mile to usmein jo saaf dikhe wahi samjhao; kuch dikhe nahi to saaf bolo, andaza mat lagao.
 Badalte interest rates, tax rules, RBI/SEBI rules ya government scheme details bina verified source ke mat banao. Tum licensed financial advisor nahi ho; specific share/fund ko buy/sell karne ki confident salah mat do. OTP, PIN, password, card number ya CVV kabhi mat maango.`;
 
 function sys() {
-  return SYSTEM + '\\n\\nAaj ki tareekh (India): ' +
+  return SYSTEM + '\n\nAaj ki tareekh (India): ' +
     new Date().toLocaleDateString('en-IN', {
       timeZone: 'Asia/Kolkata',
       day: 'numeric',
@@ -14,20 +14,17 @@ function sys() {
     }) + '.';
 }
 
-const TIMEOUT = 20000;
-const GEMINI_TIMEOUT = 18000;
+const TIMEOUT = 15000;
+const GEMINI_TIMEOUT = 15000;
+const TOTAL_BUDGET = 45000; // vercel.json maxDuration (60s) se kam
 const MAX_MESSAGES = 20;
 const MAX_CONTENT_CHARS = 12000;
 const MAX_ATTACHMENTS = 3;
-const MAX_MEDIA_CHARS = 3000000;
-const MAX_REQUEST_CHARS = 5000000;
+const MAX_MEDIA_CHARS = 3500000; // base64 chars (total)
+const MAX_REQUEST_CHARS = 4200000; // Vercel body limit 4.5 MB hai
 const MAX_OUTPUT_TOKENS = 1200;
-const MEDIA_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'application/pdf'
-];
+const GEMINI_OUTPUT_TOKENS = 2000;
+const MEDIA_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 
 const inr = n => '₹' + Math.round(n).toLocaleString('en-IN');
 const r2 = n => Math.round(n * 100) / 100;
@@ -66,8 +63,7 @@ const DEFS = [
       const r = rate / 1200;
       const emi = r === 0
         ? P / n
-        : P * r * Math.pow(1 + r, n) /
-          (Math.pow(1 + r, n) - 1);
+        : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
 
       return {
         monthly_emi: inr(emi),
@@ -92,8 +88,7 @@ const DEFS = [
       const rate = num(a.annual_return, 'annual_return');
       const years = num(a.years, 'years');
 
-      if (P <= 0 || years <= 0 || years > 100 ||
-          rate < -50 || rate > 100) {
+      if (P <= 0 || years <= 0 || years > 100 || rate < -50 || rate > 100) {
         throw new Error('Rashi, return ya avadhi galat hai');
       }
 
@@ -160,9 +155,7 @@ const DEFS = [
         throw new Error('Value ya duration galat hai');
       }
 
-      return {
-        cagr_percent: r2((Math.pow(e / s, 1 / y) - 1) * 100)
-      };
+      return { cagr_percent: r2((Math.pow(e / s, 1 / y) - 1) * 100) };
     }
   },
   {
@@ -184,10 +177,7 @@ const DEFS = [
       }
 
       const interest = P * rate * t / 100;
-      return {
-        interest: inr(interest),
-        total_amount: inr(P + interest)
-      };
+      return { interest: inr(interest), total_amount: inr(P + interest) };
     }
   },
   {
@@ -204,8 +194,7 @@ const DEFS = [
       const rate = num(a.gst_rate, 'gst_rate');
       const inc = num(a.inclusive, 'inclusive');
 
-      if (amount < 0 || rate < 0 || rate > 100 ||
-          ![0, 1].includes(inc)) {
+      if (amount < 0 || rate < 0 || rate > 100 || ![0, 1].includes(inc)) {
         throw new Error('Amount, GST rate ya inclusive value galat hai');
       }
 
@@ -242,8 +231,7 @@ const DEFS = [
       const rate = num(a.annual_inflation, 'annual_inflation');
       const years = num(a.years, 'years');
 
-      if (amount <= 0 || rate < -20 || rate > 100 ||
-          years <= 0 || years > 100) {
+      if (amount <= 0 || rate < -20 || rate > 100 || years <= 0 || years > 100) {
         throw new Error('Amount, inflation ya duration galat hai');
       }
 
@@ -260,10 +248,7 @@ const DEFS = [
 function schema(d, gemini = false) {
   const properties = {};
   for (const [k, description] of Object.entries(d.params)) {
-    properties[k] = {
-      type: gemini ? 'NUMBER' : 'number',
-      description
-    };
+    properties[k] = { type: gemini ? 'NUMBER' : 'number', description };
   }
   return gemini
     ? { type: 'OBJECT', properties, required: d.required }
@@ -282,11 +267,7 @@ function runTool(name, args) {
 
 const OPENAI_TOOLS = DEFS.map(d => ({
   type: 'function',
-  function: {
-    name: d.name,
-    description: d.description,
-    parameters: schema(d)
-  }
+  function: { name: d.name, description: d.description, parameters: schema(d) }
 }));
 
 const GEMINI_TOOLS = [{
@@ -305,14 +286,26 @@ async function fail(name, response) {
   throw new Error(`${name} HTTP ${response.status}: ${body}`);
 }
 
-/* Groq / OpenRouter */
+/* Groq / OpenRouter (OpenAI-compatible) */
+function toOpenAI(m) {
+  const imgs = (m.attachments || []).filter(a => a.mime.startsWith('image/'));
+  if (!imgs.length) return { role: m.role, content: m.content };
+  return {
+    role: m.role,
+    content: [
+      { type: 'text', text: m.content },
+      ...imgs.map(a => ({
+        type: 'image_url',
+        image_url: { url: `data:${a.mime};base64,${a.data}` }
+      }))
+    ]
+  };
+}
+
 async function openaiChat({ name, url, key, model, messages }) {
   if (!key) throw new Error(name + ' API key missing');
 
-  const convo = [
-    { role: 'system', content: sys() },
-    ...messages.map(m => ({ role: m.role, content: m.content }))
-  ];
+  const convo = [{ role: 'system', content: sys() }, ...messages.map(toOpenAI)];
 
   for (let i = 0; i < 5; i++) {
     const r = await fetch(url, {
@@ -353,9 +346,7 @@ async function openaiChat({ name, url, key, model, messages }) {
         convo.push({
           role: 'tool',
           tool_call_id: tc.id,
-          content: JSON.stringify(
-            runTool(tc.function?.name, args)
-          )
+          content: JSON.stringify(runTool(tc.function?.name, args))
         });
       }
       continue;
@@ -383,8 +374,9 @@ const askOpenRouter = messages => openaiChat({
   name: 'OpenRouter',
   url: 'https://openrouter.ai/api/v1/chat/completions',
   key: (process.env.OPENROUTER_API_KEY || '').trim(),
-  model: process.env.OPENROUTER_MODEL ||
-    'meta-llama/llama-3.3-70b-instruct',
+  model: messages.some(m => m.attachments?.length)
+    ? (process.env.OPENROUTER_VISION_MODEL || 'google/gemini-2.5-flash')
+    : (process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct'),
   messages
 });
 
@@ -393,18 +385,24 @@ async function geminiCall(model, messages) {
   const key = (process.env.GEMINI_API_KEY || '').trim();
   if (!key) throw new Error('GEMINI_API_KEY missing');
 
-  const contents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [
-      { text: m.content },
-      ...(m.attachments || []).map(a => ({
-        inlineData: {
-          mimeType: a.mime,
-          data: a.data
-        }
-      }))
-    ]
-  }));
+  const contents = messages.map(m => {
+    const parts = [];
+    if (m.content && m.content.trim()) parts.push({ text: m.content });
+    for (const a of m.attachments || []) {
+      parts.push({ inlineData: { mimeType: a.mime, data: a.data } });
+    }
+    return { role: m.role === 'assistant' ? 'model' : 'user', parts };
+  });
+
+  // Gemini 2.5 mein thinking tokens bhi maxOutputTokens mein ginte hain.
+  // Isliye thinking band: warna photo par jawab khali aa sakta hai.
+  const generationConfig = {
+    maxOutputTokens: GEMINI_OUTPUT_TOKENS,
+    temperature: 0.2
+  };
+  if (!/pro/i.test(model)) {
+    generationConfig.thinkingConfig = { thinkingBudget: 0 };
+  }
 
   for (let i = 0; i < 5; i++) {
     const r = await fetch(
@@ -416,14 +414,9 @@ async function geminiCall(model, messages) {
           'x-goog-api-key': key
         },
         body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: sys() }]
-          },
+          systemInstruction: { parts: [{ text: sys() }] },
           contents,
-          generationConfig: {
-            maxOutputTokens: MAX_OUTPUT_TOKENS,
-            temperature: 0.2
-          },
+          generationConfig,
           tools: GEMINI_TOOLS
         }),
         signal: AbortSignal.timeout(GEMINI_TIMEOUT)
@@ -433,22 +426,19 @@ async function geminiCall(model, messages) {
     if (!r.ok) await fail('Gemini(' + model + ')', r);
 
     const data = await r.json();
-    const parts = data.candidates?.[0]?.content?.parts || [];
+    const cand = data.candidates?.[0];
+    const parts = cand?.content?.parts || [];
     const calls = parts.filter(p => p.functionCall);
 
     if (calls.length) {
       contents.push({ role: 'model', parts });
-
       contents.push({
         role: 'user',
         parts: calls.map(p => ({
           functionResponse: {
             name: p.functionCall.name,
             response: {
-              result: runTool(
-                p.functionCall.name,
-                p.functionCall.args || {}
-              )
+              result: runTool(p.functionCall.name, p.functionCall.args || {})
             }
           }
         }))
@@ -457,11 +447,15 @@ async function geminiCall(model, messages) {
     }
 
     const answer = parts
+      .filter(p => !p.thought)
       .map(p => p.text || '')
       .join('')
       .trim();
 
-    if (!answer) throw new Error('Gemini se khali jawab mila');
+    if (!answer) {
+      const why = data.promptFeedback?.blockReason || cand?.finishReason || 'unknown';
+      throw new Error('Gemini(' + model + ') se khali jawab mila (' + why + ')');
+    }
     return answer;
   }
 
@@ -488,16 +482,17 @@ async function askGemini(messages) {
   throw new Error(errors.join(' | '));
 }
 
+// media: false = sirf text, 'image' = photo chalegi (PDF nahi), 'all' = photo + PDF
 const ALL = [
-  { name: 'groq', env: 'GROQ_API_KEY', run: askGroq },
-  { name: 'gemini', env: 'GEMINI_API_KEY', run: askGemini },
-  { name: 'openrouter', env: 'OPENROUTER_API_KEY', run: askOpenRouter }
+  { name: 'groq', env: 'GROQ_API_KEY', media: false, run: askGroq },
+  { name: 'gemini', env: 'GEMINI_API_KEY', media: 'all', run: askGemini },
+  { name: 'openrouter', env: 'OPENROUTER_API_KEY', media: 'image', run: askOpenRouter }
 ];
 
 /* Basic per-instance rate limit.
    Production scale par Upstash/Redis ya firewall use karo. */
 const hits = new Map();
-const PER_MIN = 8;
+const PER_MIN = 10;
 const PER_HOUR = 60;
 
 function limited(ip) {
@@ -514,9 +509,9 @@ function limited(ip) {
   hits.set(ip, arr);
 
   if (hits.size > 5000) {
-    for (const [key, times] of hits) {
+    for (const [k, times] of hits) {
       if (!times.length || now - times[times.length - 1] > 3600000) {
-        hits.delete(key);
+        hits.delete(k);
       }
     }
   }
@@ -525,8 +520,9 @@ function limited(ip) {
 }
 
 async function handler(req, res) {
-  const keys = {};
+  res.setHeader('Cache-Control', 'no-store');
 
+  const keys = {};
   for (const p of ALL) {
     keys[p.name] = Boolean((process.env[p.env] || '').trim());
   }
@@ -537,18 +533,12 @@ async function handler(req, res) {
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'GET, POST');
-    return res.status(405).json({
-      message: 'Sirf GET aur POST allowed hain.'
-    });
+    return res.status(405).json({ message: 'Sirf GET aur POST allowed hain.' });
   }
 
   let requestBytes;
-
   try {
-    requestBytes = Buffer.byteLength(
-      JSON.stringify(req.body || {}),
-      'utf8'
-    );
+    requestBytes = Buffer.byteLength(JSON.stringify(req.body || {}), 'utf8');
   } catch (_) {
     requestBytes = MAX_REQUEST_CHARS + 1;
   }
@@ -561,9 +551,8 @@ async function handler(req, res) {
 
   const forwarded = req.headers['x-forwarded-for'];
   const ip =
-    (typeof forwarded === 'string'
-      ? forwarded.split(',')[0].trim()
-      : '') ||
+    (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : '') ||
+    (typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'] : '') ||
     req.socket?.remoteAddress ||
     'unknown';
 
@@ -584,10 +573,7 @@ async function handler(req, res) {
       typeof m.content === 'string'
     )
     .map(m => {
-      const out = {
-        role: m.role,
-        content: m.content.slice(0, MAX_CONTENT_CHARS)
-      };
+      const out = { role: m.role, content: m.content.slice(0, MAX_CONTENT_CHARS) };
 
       if (m.role === 'user' && Array.isArray(m.attachments)) {
         const attachments = m.attachments
@@ -600,18 +586,17 @@ async function handler(req, res) {
             /^[A-Za-z0-9+/]+={0,2}$/.test(a.data)
           )
           .slice(0, MAX_ATTACHMENTS)
-          .map(a => ({
-            mime: a.mime,
-            data: a.data
-          }));
+          .map(a => ({ mime: a.mime, data: a.data }));
 
-        if (attachments.length) {
-          out.attachments = attachments;
-        }
+        if (attachments.length) out.attachments = attachments;
       }
 
       return out;
-    });
+    })
+    .filter(m => m.content.trim() || m.attachments);
+
+  // Conversation hamesha user message se shuru ho
+  while (clean.length && clean[0].role === 'assistant') clean.shift();
 
   if (!clean.length || clean[clean.length - 1].role !== 'user') {
     return res.status(400).json({
@@ -619,14 +604,23 @@ async function handler(req, res) {
     });
   }
 
-  const mediaSize = clean.reduce(
-    (sum, m) =>
-      sum + (m.attachments || []).reduce(
-        (s, a) => s + a.data.length,
-        0
-      ),
-    0
-  );
+  // Photo/PDF sirf sabse naye message ki jaati hai; purani history se hata do.
+  // (Warna har baar purani photo dobara jaati hai aur sab fail hone lagta hai.)
+  const last = clean.length - 1;
+  clean.forEach((m, i) => {
+    if (i !== last && m.attachments) {
+      delete m.attachments;
+      if (!m.content.trim()) m.content = '[Pehle ek photo/file bheji gayi thi]';
+    }
+  });
+
+  // Sirf photo bheji ho (text nahi) to Gemini khali text part reject karta hai
+  if (!clean[last].content.trim()) {
+    clean[last].content = 'Is attachment ko dekho aur batao isme kya hai.';
+  }
+
+  const media = clean[last].attachments || [];
+  const mediaSize = media.reduce((s, a) => s + a.data.length, 0);
 
   if (mediaSize > MAX_MEDIA_CHARS) {
     return res.status(413).json({
@@ -634,32 +628,36 @@ async function handler(req, res) {
     });
   }
 
-  const needsGemini = mediaSize > 0;
+  const hasMedia = media.length > 0;
+  const hasPdf = media.some(a => a.mime === 'application/pdf');
 
   const providers = ALL.filter(p =>
     keys[p.name] &&
-    (!needsGemini || p.name === 'gemini')
+    (!hasMedia ||
+      p.media === 'all' ||
+      (p.media === 'image' && !hasPdf))
   );
 
   if (!providers.length) {
     return res.status(500).json({
-      message: needsGemini
-        ? 'Photo/PDF ke liye GEMINI_API_KEY missing hai. Vercel Environment Variables mein add karke redeploy karo.'
+      message: hasMedia
+        ? 'Photo/PDF ke liye GEMINI_API_KEY (ya photo ke liye OPENROUTER_API_KEY) chahiye. Vercel Environment Variables mein add karke redeploy karo.'
         : 'Koi AI API key nahi mili. Vercel Environment Variables mein kam se kam ek provider ki key add karo.',
       keys
     });
   }
 
   const errors = [];
+  const started = Date.now();
 
   for (const p of providers) {
+    if (Date.now() - started > TOTAL_BUDGET) {
+      errors.push(p.name + ': time limit se skip');
+      continue;
+    }
     try {
       const reply = await p.run(clean);
-
-      return res.status(200).json({
-        reply,
-        used: p.name
-      });
+      return res.status(200).json({ reply, used: p.name });
     } catch (e) {
       console.error(p.name + ' failed:', e.message);
       errors.push(p.name + ': ' + e.message);
@@ -667,7 +665,7 @@ async function handler(req, res) {
   }
 
   return res.status(502).json({
-    message: 'Saare AI providers fail ho gaye. API keys, model access aur provider limits check karo.',
+    message: 'Saare AI providers fail ho gaye. Thodi der baad dobara try karo.',
     details: errors,
     keys
   });
