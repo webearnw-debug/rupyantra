@@ -1,6 +1,9 @@
+
 {
-  "functions": { "api/chat.js": { "maxDuration": 60 } },
   "rewrites": [
-    { "source": "/ai", "destination": "/index.html" }
+    {
+      "source": "/ai",
+      "destination": "/index.html"
+    }
   ]
 }
