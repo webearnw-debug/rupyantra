@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi-IN">
+<html lang="en-IN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -25,7 +25,7 @@
   "url":"https://rupyantra.vercel.app/ai",
   "applicationCategory":"FinanceApplication",
   "operatingSystem":"Web",
-  "inLanguage":"hi-IN",
+  "inLanguage":"en-IN",
   "description":"AI assistant for understanding EMI, SIP, loans, budgeting and savings in Hinglish.",
   "offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}
 }
@@ -60,7 +60,8 @@ h1{font-size:clamp(22px,6vw,30px);line-height:1.2;font-weight:600;text-align:cen
 .msg .retry{color:#d04444}
 .card{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:12px 12px 8px 16px;min-height:112px;display:flex;flex-direction:column;box-shadow:0 8px 30px -14px rgba(90,70,200,.25)}
 textarea:focus,textarea:focus-visible{outline:none;box-shadow:none}
-textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:400 15px/1.5 "Outfit",system-ui,sans-serif;min-height:48px;max-height:200px;padding:0}
+/* 16px: iPhone par focus karte hi page zoom na ho */
+textarea{flex:1;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:400 16px/1.5 "Outfit",system-ui,sans-serif;min-height:48px;max-height:200px;padding:0}
 textarea::placeholder{color:var(--muted)}
 .row{display:flex;justify-content:flex-end;align-items:center;gap:4px;padding-top:6px}
 .circle{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;flex:none}
@@ -130,7 +131,7 @@ input[type=file]{display:none}
       <div id="note" class="note" role="status" aria-live="polite"></div>
       <form class="card" id="form">
         <div class="chips" id="chips"></div>
-        <textarea id="inp" rows="1" placeholder="Aapka agla sawal kya hai?" aria-label="Apna sawal" autocomplete="off"></textarea>
+        <textarea id="inp" rows="1" maxlength="4000" placeholder="Aapka agla sawal kya hai?" aria-label="Apna sawal" autocomplete="off"></textarea>
         <div class="row">
           <div id="plusWrap">
             <button type="button" class="circle" id="plus" aria-label="Photo ya file jodo" aria-haspopup="true" aria-expanded="false">
@@ -158,10 +159,13 @@ const $=id=>document.getElementById(id);
 const app=$('app'),msgs=$('msgs'),inp=$('inp'),stopBtn=$('stop'),form=$('form'),mic=$('mic'),sugg=$('sugg');
 const plus=$('plus'),menu=$('menu'),imgIn=$('imgIn'),fileIn=$('fileIn'),chips=$('chips'),note=$('note');
 const DEBUG=/[?&]debug=1/.test(location.search); // /ai?debug=1 par provider ke asli errors dikhte hain
-let history=[],pending=[],log=[],gen=0,controller=null,activeBot=null,busy=false,noteTimer=null,rec=null;
-// Limits backend (api/chat.js) se match karti hain: base64 total 3.5M, Vercel body 4.5 MB
-const MAX_FILES=3,MAX_B64=2700000,MAX_TOTAL_B64=3300000,MAX_PDF=2000000,MAX_TEXT=12000,MAX_TEXT_FILE=500000;
+const API='/api/chat';
+// convo = API ko jaane wale messages; log = screen par dikhne wale messages
+let convo=[],pending=[],log=[],gen=0,controller=null,activeBot=null,busy=false,noteTimer=null,rec=null,stopped=false;
+// Limits backend (api/chat.js) se match karti hain: content 12000, base64 total 3.5M, Vercel body 4.5 MB
+const MAX_FILES=3,MAX_B64=2700000,MAX_TOTAL_B64=3300000,MAX_PDF=2000000,MAX_CONTENT=12000,TEXT_PER_FILE=8000,MAX_TEXT_FILE=500000,REQUEST_TIMEOUT=55000;
 const KEY='rupeyantra_chat_v2',DB_NAME='rupeyantra_ai_files',DB_STORE='sessions';
+const TEXT_EXT=/\.(txt|csv|tsv|json|md|log)$/i;
 const SUGG=['EMI kaise nikalte hain?','50 lakh ka home loan 8.5% par 20 saal ke liye EMI kitni hogi?','Mahine ki 5000 ki SIP 12% par 10 saal mein kitni banegi?','Mahine ka budget kaise banaye?'];
 
 function refresh(){form.classList.toggle('has-text',inp.value.trim().length>0||pending.length>0)}
@@ -169,7 +173,8 @@ function grow(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeig
 function setBusy(b){busy=b;form.classList.toggle('busy',b)}
 function warn(t){note.textContent=t;note.classList.add('show');clearTimeout(noteTimer);noteTimer=setTimeout(()=>note.classList.remove('show'),6000)}
 inp.addEventListener('input',grow);
-inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+inp.addEventListener('keydown',e=>{const touch=window.matchMedia&&matchMedia('(pointer:coarse)').matches;if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!touch){e.preventDefault();form.requestSubmit()}});
+inp.addEventListener('paste',e=>{const f=Array.from((e.clipboardData&&e.clipboardData.files)||[]).filter(x=>x.type.startsWith('image/'));if(f.length){e.preventDefault();addFiles(f)}});
 
 /* menu */
 function closeMenu(){menu.classList.remove('open');plus.classList.remove('on');plus.setAttribute('aria-expanded','false')}
@@ -189,7 +194,7 @@ async function dbDelete(){try{const db=await openDB();await new Promise((resolve
 let saveQueue=Promise.resolve();
 function save(){
   // Photo/PDF ka base64 kabhi save nahi hota; sirf text aur chhota thumbnail.
-  const snap={log:log.slice(-60),history:history.slice(-40).map(m=>({role:m.role,content:m.content})),savedAt:Date.now()};
+  const snap={log:log.slice(-60),history:convo.slice(-40).map(m=>({role:m.role,content:m.content})),savedAt:Date.now()};
   saveQueue=saveQueue.then(()=>dbPut(snap)).catch(()=>{
     try{localStorage.setItem(KEY,JSON.stringify({log:snap.log.slice(-30).map(l=>({role:l.role,text:l.text,atts:(l.atts||[]).map(a=>({name:a.name,thumb:null}))})),history:snap.history.slice(-20)}))}catch(_){}
   });
@@ -230,159 +235,208 @@ function botMsg(bot,text,animate){
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
   if(!animate||reduce||text.length<40){finish();return}
   const my=gen;let i=0;const step=Math.max(3,Math.ceil(text.length/90));
-  const timer=setInterval(()=>{if(my!==gen||!bot.isConnected){clearInterval(timer);return}i+=step;if(i>=text.length){clearInterval(timer);finish();return}span.textContent=text.slice(0,i);msgs.scrollTop=msgs.scrollHeight},18);
+  const timer=setInterval(()=>{
+    // naya message ya naya chat aaya to animation rok kar poora text dikha do (adhura text na rahe)
+    if(my!==gen||!bot.isConnected){clearInterval(timer);finish();return}
+    i+=step;
+    if(i>=text.length){clearInterval(timer);finish();return}
+    span.textContent=text.slice(0,i);msgs.scrollTop=msgs.scrollHeight;
+  },18);
 }
 
 /* attachments */
 function readDataURL(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error('File padh nahi payi'));r.readAsDataURL(f)})}
 function readText(f){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(new Error('File padh nahi payi'));r.readAsText(f)})}
-async function compressImage(file){
-  if(file.size>12*1024*1024)throw new Error('Photo 12 MB se chhoti honi chahiye.');
-  const url=await readDataURL(file);
-  const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('Ye photo khul nahi payi'));i.src=url});
-  const s=Math.min(1,1280/Math.max(img.width,img.height));
-  const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));
-  const x=c.getContext('2d');if(!x)throw new Error('Photo process nahi ho payi');
-  x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
-  const out=c.toDataURL('image/jpeg',.78);
-  return{kind:'media',mime:'image/jpeg',data:out.split(',')[1],thumb:out,name:file.name||'photo'};
+function loadImage(url){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Is photo ka format support nahi hai'));im.src=url})}
+function drawScaled(im,max,q){
+  const s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));
+  const w=Math.max(1,Math.round(im.naturalWidth*s)),h=Math.max(1,Math.round(im.naturalHeight*s));
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  return c.toDataURL('image/jpeg',q);
 }
-async function makeAttachment(file){
-  const name=file.name||'file',ext=(name.split('.').pop()||'').toLowerCase();
-  if(file.type.startsWith('image/'))return compressImage(file);
-  if(file.type==='application/pdf'||ext==='pdf'){
-    if(file.size>MAX_PDF)throw new Error('PDF 2 MB se chhoti honi chahiye.');
-    const data=(await readDataURL(file)).split(',')[1]||'';
-    if(!data||data.length>MAX_B64)throw new Error('PDF bahut badi hai.');
-    return{kind:'media',mime:'application/pdf',data,thumb:null,name};
+const b64Of=u=>u.split(',')[1]||'';
+const pendingB64=()=>pending.reduce((n,p)=>n+(p.data?p.data.length:0),0);
+
+// Photo ko chhota karke JPEG banata hai taaki upload size limit mein rahe.
+async function prepareImage(f){
+  const url=await readDataURL(f);
+  const im=await loadImage(url);
+  const room=Math.min(MAX_B64,MAX_TOTAL_B64-pendingB64());
+  for(const [max,q] of [[1600,.82],[1280,.78],[1024,.72],[800,.65]]){
+    const data=b64Of(drawScaled(im,max,q));
+    if(data.length&&data.length<=room){
+      return {kind:'image',name:f.name||'photo.jpg',mime:'image/jpeg',data,thumb:drawScaled(im,120,.7)};
+    }
   }
-  if(file.type.startsWith('text/')||['txt','csv','tsv','json','md','log'].includes(ext)){
-    if(file.size>MAX_TEXT_FILE)throw new Error('Text file bahut badi hai.');
-    const text=(await readText(file)).slice(0,MAX_TEXT);
-    if(!text.trim())throw new Error('File khali hai.');
-    return{kind:'text',mime:'text/plain',text,thumb:null,name};
-  }
-  throw new Error('Ye file type support nahi hai. Photo, PDF ya text file bhejo.');
+  throw new Error('Photo bahut badi hai; chhoti photo bhejo');
 }
-function renderChips(){
-  chips.innerHTML='';
-  pending.forEach((a,i)=>{
-    const c=document.createElement('div');c.className='chip';
-    if(a.thumb){const im=document.createElement('img');im.src=a.thumb;im.alt='';c.appendChild(im)}
-    else{const ic=document.createElement('span');ic.className='ic';ic.textContent=a.mime==='application/pdf'?'📄':'📎';c.appendChild(ic)}
-    const nm=document.createElement('span');nm.className='nm';nm.textContent=a.name;c.appendChild(nm);
-    const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Hatao');
-    x.onclick=()=>{pending.splice(i,1);renderChips()};c.appendChild(x);chips.appendChild(c);
-  });
-  refresh();
+async function preparePdf(f){
+  if(f.size>MAX_PDF)throw new Error('PDF 2 MB se chhoti honi chahiye');
+  const data=b64Of(await readDataURL(f));
+  if(!data||data.length>MAX_TOTAL_B64-pendingB64())throw new Error('Files ka total size bahut zyada hai');
+  return {kind:'pdf',name:f.name||'file.pdf',mime:'application/pdf',data,thumb:null};
+}
+async function prepareText(f){
+  if(f.size>MAX_TEXT_FILE)throw new Error('Text file bahut badi hai');
+  const text=(await readText(f)).replace(/\u0000/g,'').trim();
+  if(!text)throw new Error('File khali hai');
+  return {kind:'text',name:f.name||'file.txt',text:text.slice(0,TEXT_PER_FILE),thumb:null};
 }
 async function addFiles(files){
   for(const f of files){
-    if(pending.length>=MAX_FILES){warn('Ek baar mein sirf '+MAX_FILES+' files bhej sakte hain.');break}
+    if(pending.length>=MAX_FILES){warn('Ek baar mein sirf '+MAX_FILES+' files jod sakte hain.');break}
     try{
-      const a=await makeAttachment(f);
-      const used=pending.filter(x=>x.kind==='media').reduce((s,x)=>s+x.data.length,0);
-      if(a.kind==='media'&&used+a.data.length>MAX_TOTAL_B64){warn('Photos/PDF ka total size bahut zyada hai.');continue}
-      pending.push(a);renderChips();
-    }catch(e){warn(e.message||'File jodi nahi ja saki.')}
+      let item;
+      if(f.type.startsWith('image/'))item=await prepareImage(f);
+      else if(f.type==='application/pdf'||/\.pdf$/i.test(f.name))item=await preparePdf(f);
+      else if(f.type.startsWith('text/')||f.type==='application/json'||TEXT_EXT.test(f.name))item=await prepareText(f);
+      else throw new Error('Ye file type support nahi hai (photo, PDF ya text file bhejo)');
+      pending.push(item);
+    }catch(e){warn((f.name?f.name+': ':'')+(e.message||'File jod nahi payi'))}
+  }
+  renderChips();
+}
+function renderChips(){
+  chips.innerHTML='';
+  pending.forEach((p,idx)=>{
+    const c=document.createElement('div');c.className='chip';
+    if(p.thumb){const im=document.createElement('img');im.src=p.thumb;im.alt='';c.appendChild(im)}
+    else{const ic=document.createElement('span');ic.className='ic';ic.textContent='📄';c.appendChild(ic)}
+    const nm=document.createElement('span');nm.className='nm';nm.textContent=p.name;c.appendChild(nm);
+    const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label',p.name+' hatao');
+    x.onclick=()=>{pending.splice(idx,1);renderChips()};
+    c.appendChild(x);chips.appendChild(c);
+  });
+  refresh();
+}
+
+// Text files ka content message ke saath [FILE: naam] ... [FILE END] block mein jaata hai (backend inhe calculation se alag rakhta hai).
+function buildContent(text){
+  const blocks=pending.filter(p=>p.kind==='text').map(p=>'[FILE: '+p.name.replace(/[\]\n\r]/g,' ').slice(0,100)+']\n'+p.text+'\n[FILE END]');
+  if(!blocks.length)return text;
+  const head=text||'Is file ko dekho aur batao isme kya hai.';
+  return (head+'\n\n'+blocks.join('\n\n')).slice(0,MAX_CONTENT);
+}
+
+/* send */
+async function send(){
+  const my=++gen;
+  stopped=false;
+  controller=new AbortController();
+  const bot=thinkingBot();activeBot=bot;setBusy(true);
+  let timedOut=false,serverData={};
+  const timer=setTimeout(()=>{timedOut=true;controller.abort()},REQUEST_TIMEOUT);
+  try{
+    const last=convo.length-1;
+    const payload=convo.map((m,i)=>{const o={role:m.role,content:m.content};if(i===last&&m.attachments)o.attachments=m.attachments;return o});
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:payload}),signal:controller.signal});
+    try{serverData=await r.json()}catch(_){}
+    if(my!==gen)return;
+    const reply=serverData&&typeof serverData.reply==='string'?serverData.reply.trim():'';
+    if(!r.ok||!reply){
+      const e=new Error((serverData&&serverData.message)||'Abhi jawab nahi mil paya. Dobara try karein.');
+      e.fromServer=true;throw e;
+    }
+    setBusy(false);
+    convo.push({role:'assistant',content:reply});
+    log.push({role:'bot',text:reply});
+    save();
+    botMsg(bot,reply,true);
+  }catch(e){
+    if(stopped||my!==gen)return;
+    let msg=e&&e.fromServer?e.message:timedOut?'Jawab dene mein der lag gayi. Dobara try karein.':'Internet check karke dobara try karein.';
+    if(DEBUG){msg+='\n['+(e&&e.message||'')+']'+(serverData&&serverData.debug?'\n'+JSON.stringify(serverData.debug):'')}
+    setBusy(false);
+    showError(bot,msg,()=>{if(busy)return;bot.remove();send()});
+  }finally{
+    clearTimeout(timer);
+    if(my===gen&&busy)setBusy(false);
   }
 }
 
-/* chat request */
-async function ask(bot){
-  const my=++gen;
-  controller=new AbortController();activeBot=bot;setBusy(true);
-  // Photo/PDF sirf sabse naye message ke saath jaati hai
-  const wire=history.slice(-20).map((m,i,arr)=>{
-    const o={role:m.role,content:m.content};
-    if(i===arr.length-1&&m.attachments&&m.attachments.length)o.attachments=m.attachments.map(a=>({mime:a.mime,data:a.data}));
-    return o;
-  });
-  try{
-    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:wire}),signal:controller.signal});
-    const raw=await res.text();let data=null;try{data=JSON.parse(raw)}catch(_){}
-    if(my!==gen)return;
-    if(!res.ok||!data||!data.reply){
-      let msg=res.status===413?'Photo/file bahut badi hai. Chhoti file bhejo.':'Server error '+res.status+'.';
-      if(data&&data.message)msg=data.message;
-      if(DEBUG)msg+='\n\n[debug '+res.status+'] '+(data&&data.details?data.details.join('\n').slice(0,700):raw.slice(0,300));
-      showError(bot,msg,()=>{bot.remove();ask(thinkingBot())});
-      return;
-    }
-    history.push({role:'assistant',content:data.reply});
-    log.push({role:'bot',text:data.reply});
-    botMsg(bot,data.reply,true);save();
-  }catch(e){
-    if(e.name==='AbortError'||my!==gen)return;
-    showError(bot,'Internet ya server se connection nahi ho paya. Dobara try karein.',()=>{bot.remove();ask(thinkingBot())});
-  }finally{
-    if(my===gen){setBusy(false);activeBot=null}
-  }
-}
 form.addEventListener('submit',e=>{
   e.preventDefault();
   if(busy)return;
   const text=inp.value.trim();
   if(!text&&!pending.length)return;
-  let content=text;
-  pending.filter(a=>a.kind==='text').forEach(a=>{content+='\n\n[File: '+a.name+']\n'+a.text});
-  content=content.trim().slice(0,MAX_TEXT);
-  const media=pending.filter(a=>a.kind==='media');
-  const shown=pending.map(a=>({thumb:a.thumb||null,name:a.name}));
-  history.push({role:'user',content,attachments:media});
+  const content=buildContent(text);
+  const atts=pending.filter(p=>p.kind!=='text');
+  const msg={role:'user',content};
+  if(atts.length)msg.attachments=atts.map(a=>({mime:a.mime,data:a.data}));
+  convo.push(msg);
+  const shown=pending.map(p=>({name:p.name,thumb:p.thumb||null}));
   log.push({role:'user',text,atts:shown});
   app.classList.add('chatting');
   addUser(text,shown);
-  pending=[];renderChips();inp.value='';grow();
+  pending=[];renderChips();
+  inp.value='';grow();
+  if(rec){try{rec.stop()}catch(_){}}
   save();
-  ask(thinkingBot());
+  send();
 });
+
 stopBtn.onclick=()=>{
-  gen++;if(controller)controller.abort();setBusy(false);
-  if(activeBot){activeBot.classList.remove('thinking');activeBot.textContent='Response roka gaya.';activeBot=null}
+  if(!busy)return;
+  stopped=true;gen++;
+  if(controller)controller.abort();
+  if(activeBot&&activeBot.isConnected)activeBot.remove();
+  setBusy(false);
 };
 
-/* new chat */
-$('newChat').onclick=()=>{
-  gen++;if(controller)controller.abort();
-  history=[];log=[];pending=[];activeBot=null;
-  msgs.innerHTML='';app.classList.remove('chatting');
-  setBusy(false);renderChips();inp.value='';grow();note.classList.remove('show');
-  wipe();
-};
-
-/* voice */
-mic.onclick=()=>{
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){warn('Is browser mein voice support nahi hai.');return}
-  if(rec){rec.stop();return}
-  rec=new SR();rec.lang='hi-IN';rec.interimResults=false;
-  rec.onresult=e=>{const t=Array.from(e.results).map(r=>r[0].transcript).join(' ');inp.value=(inp.value+' '+t).trim();grow()};
-  rec.onerror=()=>warn('Voice sunai nahi diya. Dobara try karo.');
-  rec.onend=()=>{rec=null;mic.classList.remove('on')};
-  mic.classList.add('on');
-  try{rec.start()}catch(_){rec=null;mic.classList.remove('on')}
+/* naya chat */
+$('newChat').onclick=async()=>{
+  stopped=true;gen++;
+  if(controller)controller.abort();
+  if(rec){try{rec.stop()}catch(_){}}
+  convo=[];log=[];pending=[];activeBot=null;
+  msgs.innerHTML='';
+  app.classList.remove('chatting');
+  setBusy(false);renderChips();inp.value='';grow();
+  await wipe();
+  inp.focus();
 };
 
 /* suggestions */
-SUGG.forEach(s=>{const b=document.createElement('button');b.type='button';b.textContent=s;b.onclick=()=>{inp.value=s;grow();form.requestSubmit()};sugg.appendChild(b)});
+SUGG.forEach(t=>{
+  const b=document.createElement('button');b.type='button';b.textContent=t;
+  b.onclick=()=>{inp.value=t;grow();form.requestSubmit()};
+  sugg.appendChild(b);
+});
 
-/* restore previous chat */
-(async function init(){
+/* bolkar poochho (voice) */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR){mic.style.display='none'}
+else{
+  mic.onclick=()=>{
+    if(rec){try{rec.stop()}catch(_){}return}
+    const r=new SR();
+    r.lang='hi-IN';r.interimResults=false;r.continuous=false;
+    r.onresult=ev=>{
+      const t=Array.from(ev.results).map(x=>x[0].transcript).join(' ').trim();
+      if(t){inp.value=(inp.value?inp.value+' ':'')+t;grow()}
+    };
+    r.onerror=ev=>{if(ev.error==='not-allowed'||ev.error==='service-not-allowed')warn('Mic use karne ki permission do.');else if(ev.error!=='no-speech'&&ev.error!=='aborted')warn('Awaaz samajh nahi aayi, dobara try karein.')};
+    r.onend=()=>{rec=null;mic.classList.remove('on')};
+    rec=r;mic.classList.add('on');
+    try{r.start()}catch(_){rec=null;mic.classList.remove('on')}
+  };
+}
+
+/* pichhla chat wapas laao */
+async function restore(){
   let snap=null;
   try{snap=await dbGet()}catch(_){}
   if(!snap){try{snap=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}}
-  if(snap&&Array.isArray(snap.log)&&snap.log.length){
-    log=snap.log;history=Array.isArray(snap.history)?snap.history:[];
-    app.classList.add('chatting');
-    log.forEach(l=>{
-      if(l.role==='user')addUser(l.text,l.atts);
-      else botMsg(add('bot',''),l.text,false);
-    });
-    msgs.scrollTop=msgs.scrollHeight;
-  }
-  grow();
-})();
+  if(!snap||!Array.isArray(snap.log)||!snap.log.length)return;
+  log=snap.log.filter(l=>l&&(l.role==='user'||l.role==='bot')&&typeof l.text==='string');
+  convo=Array.isArray(snap.history)?snap.history.filter(m=>m&&(m.role==='user'||m.role==='assistant')&&typeof m.content==='string'):[];
+  if(!log.length)return;
+  app.classList.add('chatting');
+  log.forEach(l=>{if(l.role==='user')addUser(l.text,Array.isArray(l.atts)?l.atts:[]);else botMsg(add('bot',''),l.text,false)});
+}
+restore().catch(()=>{});
+grow();
 </script>
 </body>
 </html>
