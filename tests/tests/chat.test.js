@@ -276,3 +276,67 @@ test('handler: rate limited IP gets 429', async t => {
   }
   assert.equal(last.code, 429);
 });
+
+/* ---------- regression: bugs jo review mein mile ---------- */
+
+test('answerWith: model galat amount se tool chalaye to authoritative inputs ka result aata hai', async () => {
+  const wrongArgs = { principal: 50000, annual_rate: 8.5, years: 20 };
+  const wrong = { name: 'calc_emi', args: wrongArgs, result: engine.runTool('calc_emi', wrongArgs) };
+  const right = engine.runTool('calc_emi', EMI_ARGS);
+  const provider = { run: async () => ({ text: 'EMI ' + wrong.result.monthly_emi + ' hogi.', calls: [wrong] }) };
+  const out = await answerWith(provider, EMI_MSG, envFor(EMI_MSG));
+  assert.equal(out.fallback, true);
+  assert.ok(out.text.includes(right.monthly_emi));
+  assert.ok(!out.text.includes(wrong.result.monthly_emi));
+});
+
+test('answerWith: model ne rate khud guess kiya to sirf kami poochhi jaati hai', async () => {
+  const msgs = [{ role: 'user', content: '50 lakh ka home loan 20 saal EMI' }];
+  const args = { principal: 5000000, annual_rate: 9, years: 20 };
+  const call = { name: 'calc_emi', args, result: engine.runTool('calc_emi', args) };
+  const provider = { run: async () => ({ text: 'EMI ' + call.result.monthly_emi + ' hogi (9% maan kar).', calls: [call] }) };
+  const out = await answerWith(provider, msgs, envFor(msgs));
+  assert.equal(out.fallback, true);
+  assert.match(out.text, /interest rate/);
+  assert.ok(!out.text.includes(call.result.monthly_emi));
+});
+
+test('answerWith: calc reply mein salah wala % ("income ka 40%") galat flag nahi hota', async () => {
+  const call = emiCall();
+  const provider = { run: async () => ({
+    text: 'EMI ' + call.result.monthly_emi + ' hai. Aam taur par EMI income ke 40% se zyada nahi honi chahiye.',
+    calls: [call]
+  }) };
+  const out = await answerWith(provider, EMI_MSG, envFor(EMI_MSG));
+  assert.ok(!out.fallback);
+});
+
+test('handler: verified RBI jawab pass hota hai, banaya hua rate fallback hota hai', async t => {
+  t.after(reset);
+  delete process.env.DEBUG_ERRORS;
+  process.env.GROQ_API_KEY = 'x';
+  process.env.GEMINI_API_KEY = 'y';
+  delete process.env.OPENROUTER_API_KEY;
+
+  const grounded = {
+    candidates: [{
+      content: { parts: [{ text: 'RBI ke mutabik repo rate 5.5% hai (policy update).' }] },
+      groundingMetadata: { groundingChunks: [{ web: { uri: 'https://vertexaisearch.example/r/1', title: 'rbi.org.in' } }] }
+    }]
+  };
+  const groq = text => okRes({ choices: [{ message: { role: 'assistant', content: text } }] });
+
+  global.fetch = async url => (String(url).includes('groq') ? groq('Repo rate abhi 5.5% hai (rbi.org.in).') : okRes(grounded));
+  let res = mockRes();
+  await handler(req([{ role: 'user', content: 'RBI repo rate kitna hai verified-test-1?' }]), res);
+  assert.equal(res.code, 200);
+  assert.match(res.body.reply, /5\.5%/);
+  assert.equal(res.body.checked, true);
+
+  global.fetch = async url => (String(url).includes('groq') ? groq('Repo rate abhi 7.25% hai.') : okRes(grounded));
+  res = mockRes();
+  await handler(req([{ role: 'user', content: 'RBI repo rate kitna hai verified-test-2?' }]), res);
+  assert.equal(res.code, 200);
+  assert.ok(!/7\.25/.test(res.body.reply));
+  assert.match(res.body.reply, /5\.5%/);
+});
