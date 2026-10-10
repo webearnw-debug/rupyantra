@@ -407,19 +407,27 @@ async function verifiedLookup(question, deadline) {
 
 /* ---------- answer + verification ---------- */
 
-function fallbackText(env, out, calcFresh) {
+function fallbackText(env, out, calcFresh, mismatch) {
   const { ctx, verification } = env;
+  const useCtx = Boolean(ctx && calcFresh);
+
+  // Model ne galat/guess inputs se tool chalaya: uska result kabhi mat dikhao
+  if (useCtx && mismatch && !ctx.complete) return engine.askForMissing(ctx);
+
+  const fromContext = () => {
+    const c = engine.runContextCalculation(ctx);
+    if (!c) return '';
+    const used = engine.describeInputs(ctx.inputs);
+    return 'Maine ye inputs liye: ' + used + '.\n' + engine.describeResult(c.name, c.args, c.result);
+  };
+
+  if (useCtx && ctx.complete && mismatch) return fromContext();
+
   const okCalls = out.calls.filter(c => c.result && !c.result.error);
   if (okCalls.length) return engine.describeCalls(okCalls);
 
-  if (ctx && calcFresh && ctx.complete) {
-    const c = engine.runContextCalculation(ctx);
-    if (c) {
-      const used = Object.entries(ctx.inputs).map(([k, v]) => k + ': ' + v).join(', ');
-      return 'Maine ye inputs liye: ' + used + '.\n' + engine.describeResult(c.name, c.args, c.result);
-    }
-  }
-  if (ctx && calcFresh && !ctx.complete) return engine.askForMissing(ctx);
+  if (useCtx && ctx.complete) return fromContext();
+  if (useCtx && !ctx.complete) return engine.askForMissing(ctx);
 
   if (verification && verification.status === 'verified') {
     return 'Official source (' + verification.domains.join(', ') + ') se mili jankari:\n' +
@@ -450,7 +458,7 @@ async function answerWith(provider, messages, env) {
   if (!calcFresh && !out.calls.length && !verification) return { text: out.text, checked: false };
 
   const evaluate = o => {
-    const check = engine.verifyReply(o.text, o.calls, userTexts, ctx, extraTexts);
+    const check = engine.verifyReply(o.text, o.calls, userTexts, ctx, extraTexts, { rates: Boolean(verification) });
     const toolMissing = calcFresh && ctx.complete && !goodCalls(o);
     return { check, toolMissing, ok: check.ok && !toolMissing };
   };
@@ -476,7 +484,7 @@ async function answerWith(provider, messages, env) {
   }
 
   if (ev.ok) return { text: out.text, checked: true };
-  return { text: fallbackText(env, out, calcFresh), checked: true, fallback: true };
+  return { text: fallbackText(env, out, calcFresh, ev.check.mismatch.length > 0), checked: true, fallback: true };
 }
 
 /* ---------- rate limit (per instance; bade scale par Upstash/Redis use karo) ---------- */
