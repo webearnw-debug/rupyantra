@@ -1,6 +1,5 @@
 'use strict';
-// Run: node --test tests/
-// Place this file at tests/finance-engine.test.js
+// Run: node --test tests/*.test.js
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const E = require('../lib/finance-engine');
@@ -247,4 +246,46 @@ test('trustedDomain: exact/subdomain only', () => {
 test('describeResult: errors never invent numbers', () => {
   const t = E.describeResult('calc_emi', {}, { error: 'principal missing hai' });
   assert.match(t, /nahi ho paya/);
+});
+
+/* ---------- regression: bugs jo review mein mile ---------- */
+test('intent: "kharcha" jaisa generic shabd specific calculator ko nahi rokta', () => {
+  const c = E.buildContext([{ role: 'user', content: 'aaj 50000 ka kharcha 6% mehngai par 10 saal baad?' }]);
+  assert.equal(c.intent, 'inflation');
+  assert.deepEqual(c.inputs, { current_amount: 50000, annual_inflation: 6, years: 10 });
+  assert.ok(c.complete);
+});
+
+test('verifyReply: saal/mahine ka seedha gunaa-bhaag jaayaz hai (EMI x 12)', () => {
+  const args = { principal: 5000000, annual_rate: 8.5, years: 20 };
+  const calls = [{ name: 'calc_emi', args, result: run('calc_emi', args) }];
+  const r = E.verifyReply('EMI ₹43,391 hai, yaani saal ka lagbhag ₹5,20,694.', calls, ['50 lakh'], null);
+  assert.equal(r.ok, true);
+});
+
+test('verifyReply: percent check optional (salah wale % galat flag na hon)', () => {
+  const args = { principal: 5000000, annual_rate: 8.5, years: 20 };
+  const calls = [{ name: 'calc_emi', args, result: run('calc_emi', args) }];
+  const text = 'EMI ₹43,391 hai. EMI income ke 40% se zyada nahi honi chahiye.';
+  assert.equal(E.verifyReply(text, calls, ['50 lakh'], null).ok, false);
+  assert.equal(E.verifyReply(text, calls, ['50 lakh'], null, [], { rates: false }).ok, true);
+});
+
+test('verifyReply: model ne kami wala input khud guess kiya to mismatch', () => {
+  const msgs = [{ role: 'user', content: '50 lakh ka home loan 20 saal EMI' }];
+  const ctx = E.buildContext(msgs);
+  assert.equal(ctx.complete, false);
+  const args = { principal: 5000000, annual_rate: 9, years: 20 };
+  const calls = [{ name: 'calc_emi', args, result: run('calc_emi', args) }];
+  const r = E.verifyReply('EMI ' + calls[0].result.monthly_emi + ' hogi.', calls, [msgs[0].content], ctx);
+  assert.equal(r.ok, false);
+  assert.match(r.mismatch[0], /annual_rate/);
+});
+
+test('verifyReply: model ne galat amount se tool chalaya to mismatch', () => {
+  const msgs = [{ role: 'user', content: '50 lakh ka home loan 8.5% par 20 saal EMI' }];
+  const ctx = E.buildContext(msgs);
+  const args = { principal: 50000, annual_rate: 8.5, years: 20 };
+  const calls = [{ name: 'calc_emi', args, result: run('calc_emi', args) }];
+  assert.equal(E.verifyReply('EMI ' + calls[0].result.monthly_emi, calls, [msgs[0].content], ctx).ok, false);
 });
